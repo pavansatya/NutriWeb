@@ -20,8 +20,8 @@ The dataset contains a single table, FoodFacts, in CSV form in FoodFacts.csv and
 
 A brief explanation of the columns in our dataset is provided below:
 
-code: Barcode of the product.
-creator: Contributor who first added the product
+- code: Barcode of the product.
+- creator: Contributor who first added the product
 created_t: Date that the product was added in UNIX format.
 last_modified_t: Date that the product page was last modified.
 product_name: Name of the product.
