@@ -1,1 +1,3 @@
 # NutriVision
+
+<!-- ABOUT THE PROJECT -->
