@@ -43,3 +43,5 @@ A brief explanation of the columns in our dataset is provided below:
 - additives_n: Number of food additives in the product.
 - ingredients_from_palm_oil_n: Number of ingredients made from palm oil.
 - nutrition_grade_fr: nutrition grade (‘a’ to ‘e’) given by france.
+
+and you can access the complete information on the different fields [here](https://static.openfoodfacts.org/data/data-fields.txt)
