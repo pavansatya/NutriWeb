@@ -47,3 +47,14 @@ A brief explanation of the columns in our dataset is provided below:
 - pantothenic-acid_100g: also known as Vitamine B5
 
 and, you can access the complete information on the different fields [here](https://static.openfoodfacts.org/data/data-fields.txt)
+
+## Installation
+
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+
+```bash
+pip install fuzzywuzzy
+```
+```bash
+pip install rapidfuzz
+```
