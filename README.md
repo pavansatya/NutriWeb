@@ -42,11 +42,11 @@ A brief explanation of the columns in our dataset is provided below:
 - nutriments: Nutritional information per serving.
 - additives_n: Number of food additives in the product.
 - ingredients_from_palm_oil_n: Number of ingredients made from palm oil.
-- nutrition-score-fr_100g: Nutri-Score - Nutrition score derived from the UK FSA score and adapted for the French market (formula defined by the team of Professor Hercberg)
-- biotin_100g: also known as Vitamine B8
-- pantothenic-acid_100g: also known as Vitamine B5
+- nutrition-score-fr_100g: Nutri-Score - Nutrition score derived from the UK FSA score and adapted for the French market (formula defined by the team of Professor Hercberg).
+- biotin_100g: also known as Vitamine B8.
+- pantothenic-acid_100g: also known as Vitamine B5.
 
-and, you can access the complete information on the different fields [here](https://static.openfoodfacts.org/data/data-fields.txt)
+and, you can access the complete information on the different fields [here](https://static.openfoodfacts.org/data/data-fields.txt).
 
 ## Installation
 
