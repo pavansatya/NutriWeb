@@ -6,14 +6,14 @@
 The dataset can be accessed [here](https://drive.google.com/file/d/1SrVPakdOvOkUEsJekmsl9786MrxWXH0g/view?usp=sharing).
 
 A food products database
-Open Food Facts is a free, open, collbarative database of food products from around the world, with ingredients, allergens, nutrition facts and all the tidbits of information we can find on product labels.
+Open Food Facts is a free, open, collaborative database of food products worldwide, with ingredients, allergens, nutrition facts and all the tidbits of information we can find on product labels.
 
 Made by everyone
 Open Food Facts is a non-profit association of volunteers.
 5000+ contributors like you have added 600 000+ products from 150 countries using our Android, iPhone or Windows Phone app or their camera to scan barcodes and upload pictures of products and their labels.
 
 For everyone
-Data about food is of public interest and has to be open. The [complete database](https://world.openfoodfacts.org/data) is published as open data and can be reused by anyone and for any use. Check-out the cool reuses or make your own!
+Data about food is of public interest and has to be open. The [complete database](https://world.openfoodfacts.org/data) is published as open data and can be reused by anyone and for any use. Check out the cool reuses or make your own!
 
 Dataset structure
 The dataset contains a single table, FoodFacts, in a tab-separated form in en.openfoodfacts.org.products.tsv 
@@ -42,6 +42,8 @@ A brief explanation of the columns in our dataset is provided below:
 - nutriments: Nutritional information per serving.
 - additives_n: Number of food additives in the product.
 - ingredients_from_palm_oil_n: Number of ingredients made from palm oil.
-- nutrition_grade_fr: nutrition grade (‘a’ to ‘e’) given by france.
+- nutrition-score-fr_100g: Nutri-Score - Nutrition score derived from the UK FSA score and adapted for the French market (formula defined by the team of Professor Hercberg)
+- biotin_100g: also known as Vitamine B8
+- pantothenic-acid_100g: also known as Vitamine B5
 
-and you can access the complete information on the different fields [here](https://static.openfoodfacts.org/data/data-fields.txt)
+and, you can access the complete information on the different fields [here](https://static.openfoodfacts.org/data/data-fields.txt)
