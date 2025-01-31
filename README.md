@@ -13,10 +13,10 @@ Open Food Facts is a non-profit association of volunteers.
 5000+ contributors like you have added 600 000+ products from 150 countries using our Android, iPhone or Windows Phone app or their camera to scan barcodes and upload pictures of products and their labels.
 
 For everyone
-Data about food is of public interest and has to be open. The complete database is published as open data and can be reused by anyone and for any use. Check-out the cool reuses or make your own!
+Data about food is of public interest and has to be open. The [complete database](https://world.openfoodfacts.org/data) is published as open data and can be reused by anyone and for any use. Check-out the cool reuses or make your own!
 
 Dataset structure
-The dataset contains a single table, FoodFacts, in CSV form in FoodFacts.csv and in SQLite form in database.sqlite.
+The dataset contains a single table, FoodFacts, in a tab-separated form in en.openfoodfacts.org.products.tsv 
 
 A brief explanation of the columns in our dataset is provided below:
 
@@ -42,6 +42,4 @@ A brief explanation of the columns in our dataset is provided below:
 - nutriments: Nutritional information per serving.
 - additives_n: Number of food additives in the product.
 - ingredients_from_palm_oil_n: Number of ingredients made from palm oil.
-- nutrition_grades: nutrition grade (‘a’ to ‘e’).
-- eco_score_score: Numerical score that quantifies the product’s environmental impact.
-- eco_score_grade: Letter grade derived from ecoscore, used as a reference for environmental impact.
+- nutrition_grade_fr: nutrition grade (‘a’ to ‘e’) given by france.
