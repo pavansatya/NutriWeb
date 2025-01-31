@@ -1,5 +1,3 @@
-from fuzzywuzzy import process
-
 def fuzzy_standardize(packaging_string):
     packaging_types = packaging_string.lower()
     packaging_list = [package.strip() for package in packaging_types.split(',')]
