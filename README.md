@@ -58,3 +58,7 @@ pip install fuzzywuzzy
 ```bash
 pip install rapidfuzz
 ```
+
+## License
+
+[Open Food Facts](https://world.openfoodfacts.org/data)
