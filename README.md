@@ -74,7 +74,7 @@ and, you can access the complete information on the different fields [here](http
 <!-- GETTING STARTED -->
 ## Getting Started
 
-## Installation
+### Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
 
