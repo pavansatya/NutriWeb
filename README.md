@@ -24,6 +24,7 @@
 </details>
 
 <!-- ABOUT THE PROJECT -->
+## About The Project
 
 ## Dataset
 The dataset can be accessed [here](https://drive.google.com/file/d/1SrVPakdOvOkUEsJekmsl9786MrxWXH0g/view?usp=sharing).
