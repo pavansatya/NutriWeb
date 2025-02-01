@@ -71,6 +71,9 @@ A brief explanation of the columns in our dataset is provided below:
 
 and, you can access the complete information on the different fields [here](https://static.openfoodfacts.org/data/data-fields.txt).
 
+<!-- GETTING STARTED -->
+## Getting Started
+
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
