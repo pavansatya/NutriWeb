@@ -1,4 +1,4 @@
-# NutriWeb
+# NutriWeb – Smart & Sustainable Food Choices
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -26,7 +26,25 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+## NutriWeb
+
+NutriWeb is an intelligent food recommendation platform designed to enhance dietary choices by providing **personalized insights, transparency, and sustainability tracking**. Unlike existing apps that offer generic ratings, NutriWeb tailors recommendations based on **BMI, allergies, and dietary goals**, while also highlighting the **environmental impact** of food choices.
+
+### **Problem Statement:**
+Current nutrition apps **lack clarity, personalization, and sustainability awareness**:
+- **Confusing information:** Complex ingredient lists make it hard to understand nutritional values.
+- **Lack of personalization:** Generic health scores fail to consider individual dietary needs.
+- **Environmental ignorance:** Most apps overlook the carbon footprint and eco-impact of food choices.
+
+### **Solution: NutriWeb’s Unique Approach**
+NutriWeb integrates **AI-driven nutrition analysis, visual comparisons, and context-aware insights** to help users make **smarter food choices**:
+- **Personalized nutrition** based on user profiles (BMI, allergies, health goals).
+- **Ingredient transparency** with easy-to-understand visual comparisons.
+- **Sustainability tracking** to highlight a product’s carbon footprint.
+
 ## Dataset
+1) **Open Food Facts:** Crowdsourced database with 3M+ food products.
+
 The dataset can be accessed [here](https://drive.google.com/file/d/1SrVPakdOvOkUEsJekmsl9786MrxWXH0g/view?usp=sharing).
 
 A food products database
@@ -71,6 +89,13 @@ A brief explanation of the columns in our dataset is provided below:
 - pantothenic-acid_100g: also known as Vitamine B5.
 
 and, you can access the complete information on the different fields [here](https://static.openfoodfacts.org/data/data-fields.txt).
+
+2) **NHANES Data:** U.S. health demographics to train personalized models.
+- ***link for the dataset: https://www.kaggle.com/datasets/ziya07/diet-recommendations-dataset?resource=download ***
+
+3) **Non-GMO Database:** Identifies GMO-containing products.
+- ***link for the dataset: https://world.openfoodfacts.org/data , https://www.nongmoproject.org/find-non-gmo/ ***
+
 
 <!-- GETTING STARTED -->
 ## Getting Started
