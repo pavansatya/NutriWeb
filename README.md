@@ -1,5 +1,7 @@
 # NutriWeb – Smart & Sustainable Food Choices
 
+![Alt Text](https://github.com/Thanvitha/NutriWeb_project/blob/main/nutrition.jpeg)
+
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
@@ -37,7 +39,7 @@ Current nutrition apps **lack clarity, personalization, and sustainability aware
 - **Environmental ignorance:** Most apps overlook the carbon footprint and eco-impact of food choices.
 
 ### **Solution: NutriWeb’s Unique Approach**
-NutriWeb integrates **AI-driven nutrition analysis, visual comparisons, and context-aware insights** to help users make **smarter food choices**:
+NutriWeb integrates **Personalized Nutrition analysis, visual comparisons, and context-aware insights** to help users make **smarter food choices**:
 - **Personalized nutrition** based on user profiles (BMI, allergies, health goals).
 - **Ingredient transparency** with easy-to-understand visual comparisons.
 - **Sustainability tracking** to highlight a product’s carbon footprint.
@@ -91,10 +93,10 @@ A brief explanation of the columns in our dataset is provided below:
 and, you can access the complete information on the different fields [here](https://static.openfoodfacts.org/data/data-fields.txt).
 
 2) **NHANES Data:** U.S. health demographics to train personalized models.
-- ***link for the dataset: https://www.kaggle.com/datasets/ziya07/diet-recommendations-dataset?resource=download ***
+- link for the dataset: https://www.kaggle.com/datasets/ziya07/diet-recommendations-dataset?resource=download
 
 3) **Non-GMO Database:** Identifies GMO-containing products.
-- ***link for the dataset: https://world.openfoodfacts.org/data , https://www.nongmoproject.org/find-non-gmo/ ***
+- link for the dataset: https://world.openfoodfacts.org/data , https://www.nongmoproject.org/find-non-gmo/
 
 
 <!-- GETTING STARTED -->
