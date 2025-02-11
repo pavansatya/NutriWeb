@@ -121,5 +121,5 @@ pip install rapidfuzz
 <!-- Output -->
 ## Output 
 
-nutrition_grades_distribution.png 
+images/nutrition_grades_distribution.png
 
