@@ -122,9 +122,7 @@ pip install rapidfuzz
 ## Output 
 
 <IMAGE src="images/nutrition_grades_distribution.png" width="600" />
-## Interactive Visualization
 
 Click the link below to view the interactive Plotly visualization:
-
 🔗 [View Interactive Visualization](https://pavansatya.github.io/NutriWeb/nutrition_grades_distribution.html)
 
