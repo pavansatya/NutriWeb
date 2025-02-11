@@ -126,3 +126,7 @@ pip install rapidfuzz
 Click the link below to view the interactive Plotly visualization:
 🔗 [View Interactive Visualization](https://pavansatya.github.io/NutriWeb/nutrition_grades_distribution.html)
 
+<IMAGE src="images/bokeh_plot.png" width="600" />
+
+Click the link below to view the interactive Bokeh visualization:
+🔗 [View Interactive Visualization](https://pavansatya.github.io/NutriWeb/dashboard.html)
