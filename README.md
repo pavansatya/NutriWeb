@@ -22,6 +22,7 @@
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#license">License</a></li>
+    <li><a href="#output">Output</a></li>
   </ol>
 </details>
 
@@ -116,3 +117,9 @@ pip install rapidfuzz
 ## License
 
 [Open Food Facts](https://world.openfoodfacts.org/data)
+
+<!-- Output -->
+## Output 
+
+<iframe src="" width="100%" height="600px"></iframe>
+
