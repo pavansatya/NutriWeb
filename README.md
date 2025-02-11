@@ -121,4 +121,4 @@ pip install rapidfuzz
 <!-- Output -->
 ## Output 
 
-<IMAGE src="images/nutrition_grades_distribution.png.webp" width="200" />
+<IMAGE src="images/nutrition_grades_distribution.png" width="200" />
