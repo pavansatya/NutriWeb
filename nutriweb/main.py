@@ -1,4 +1,5 @@
 # nutriweb/main.py
+import pandas as pd
 from nutriweb.recommendations import personalized_recommendations
 from nutriweb.data_loader import load_products  # Just for testing purposes
 
