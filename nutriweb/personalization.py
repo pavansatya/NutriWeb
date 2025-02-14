@@ -15,7 +15,7 @@ def has_allergy_conflict(user_allergies, ingredients_text):
     for allergen in user_allergy_set:
         if allergen in ingredients_lower:
             return True
-    return False
+    return False 
 
 def personalized_adjustment(user, product):
     """

@@ -3,6 +3,7 @@
 ![Alt Text](https://github.com/Thanvitha/NutriWeb_project/blob/main/images/nutrition.jpeg)
 
 <!-- TABLE OF CONTENTS -->
+
 <details>
   <summary>Table of Contents</summary>
   <ol>
