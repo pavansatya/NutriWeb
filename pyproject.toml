@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "nutriweb"
+version = "0.1.0"
+description = "A personalized product recommendation system."
+authors = ["Thanvitha <m.thanvitha@gmail.com>"]
+readme = "readme.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pandas = "^1.5.3"
+numpy = "^1.23.5"
+flask = "^3.1.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.2.0"
+
+# Use double square brackets for an array of tables.
+[[tool.poetry.packages]]
+include = "nutriweb"
+from = "."
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

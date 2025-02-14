@@ -1,8 +1,14 @@
 # NutriWeb – Smart & Sustainable Food Choices
 
+![Alt Text](https://github.com/Thanvitha/NutriWeb_project/blob/main/images/nutrition.jpeg) 
+<<<<<<< HEAD
+![Alt Text](https://github.com/Thanvitha/NutriWeb_project/blob/main/images/nutrition.jpeg)
+=======
 ![Alt Text](https://github.com/Thanvitha/NutriWeb_project/blob/main/nutrition.jpeg)
+>>>>>>> 32767bc6941ed8acc8c8b37a941a7b3b09e3febd
 
 <!-- TABLE OF CONTENTS -->
+
 <details>
   <summary>Table of Contents</summary>
   <ol>
@@ -22,7 +28,10 @@
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#license">License</a></li>
+<<<<<<< HEAD
+=======
     <li><a href="#output">Output</a></li>
+>>>>>>> 32767bc6941ed8acc8c8b37a941a7b3b09e3febd
   </ol>
 </details>
 
@@ -93,7 +102,11 @@ A brief explanation of the columns in our dataset is provided below:
 
 and, you can access the complete information on the different fields [here](https://static.openfoodfacts.org/data/data-fields.txt).
 
+<<<<<<< HEAD
+2) **Users Data for personalized recommendation:** 
+=======
 2) **NHANES Data:** U.S. health demographics to train personalized models.
+>>>>>>> 32767bc6941ed8acc8c8b37a941a7b3b09e3febd
 - link for the dataset: https://www.kaggle.com/datasets/ziya07/diet-recommendations-dataset?resource=download
 
 3) **Non-GMO Database:** Identifies GMO-containing products.
@@ -114,6 +127,38 @@ pip install fuzzywuzzy
 pip install rapidfuzz
 ```
 
+<<<<<<< HEAD
+## Nutriweb
+
+### Modules
+- **main.py**: Main module for the project. It contains the main functions for the project.
+- **data_loader.py**: Module for data handling and processing.
+- **personalization.py**: Module for the personalized recommendations.
+- **recommendations.py**: Module for product recommendations.
+- **scoring.py**: Module for giving a score for the nutrition score.
+
+## Templates
+
+### Html files
+- **index.html**: Main html file for the project.
+- **recommendations.html**: html file for the recommendations.
+
+## pyproject.toml
+
+### toml file to keep track of the dependencies used in the project.
+
+## Notebook
+
+- **open_food_facts.ipynb**: Notebook for data cleaning, pre-processing, key visualizations and testing.
+
+## Gitignore file
+- **.gitignore**: File to ignore the data files in the repository. As the dataset is huge we used the .gitignore file to ignore the data.
+
+
+## License
+
+[Open Food Facts](https://world.openfoodfacts.org/data)
+=======
 ## License
 
 [Open Food Facts](https://world.openfoodfacts.org/data)
@@ -130,3 +175,4 @@ Click the link below to view the interactive Plotly visualization:
 
 Click the link below to view the interactive Bokeh visualization:
 🔗 [View Interactive Visualization](https://pavansatya.github.io/NutriWeb/dashboard.html)
+>>>>>>> 32767bc6941ed8acc8c8b37a941a7b3b09e3febd

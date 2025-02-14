@@ -1,4 +1,8 @@
 # nutriweb/main.py
+<<<<<<< HEAD
+import pandas as pd
+=======
+>>>>>>> 32767bc6941ed8acc8c8b37a941a7b3b09e3febd
 from nutriweb.recommendations import personalized_recommendations
 from nutriweb.data_loader import load_products  # Just for testing purposes
 
@@ -7,7 +11,7 @@ def main():
     sample_products = load_products(sample_size=100)
     print("Sample Products:")
     print(sample_products.head())
-
+   
     # Now, run the recommendation system normally (which may load all rows)
     user_id_example = 1
     category = "Cereal"  # Or None for all categories

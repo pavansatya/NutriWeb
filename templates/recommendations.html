@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NutriWeb - Recommendations</title>
+</head>
+<body>
+  <h1>Recommendations for "{{ target.product_name }}"</h1>
+  <p>Category: {{ target.category }}</p>
+  <p>Your personalized score for this product: {{ target_score | round(2) }}</p>
+  
+  <h2>Recommended Alternatives (with higher personalized scores):</h2>
+  {% if recommendations %}
+    <table border="1" cellspacing="0" cellpadding="10">
+      <thead> 
+        <tr>
+          <th>Product Name</th>
+          <th>Category</th>
+          <th>Personalized Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for prod in recommendations %}
+          <tr>
+            <td>{{ prod.product_name }}</td>
+            <td>{{ prod.category }}</td>
+            <td>{{ prod.personalized_score | round(2) }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No better alternatives found.</p>
+  {% endif %}
+  
+  <br>
+  <a href="/">Try another product</a>
+</body>
+</html>
