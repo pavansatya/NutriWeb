@@ -4,7 +4,7 @@ from flask import Flask, render_template, request
 from nutriweb.data_loader import load_products
 from nutriweb.scoring import compute_base_health_score
 from nutriweb.personalization import compute_personalized_score
-
+ 
 app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])

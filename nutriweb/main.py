@@ -8,7 +8,7 @@ def main():
     sample_products = load_products(sample_size=100)
     print("Sample Products:")
     print(sample_products.head())
-
+   
     # Now, run the recommendation system normally (which may load all rows)
     user_id_example = 1
     category = "Cereal"  # Or None for all categories

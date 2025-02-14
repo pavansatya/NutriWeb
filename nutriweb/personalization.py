@@ -13,7 +13,7 @@ def has_allergy_conflict(user_allergies, ingredients_text):
         return False
     ingredients_lower = ingredients_text.lower()
     for allergen in user_allergy_set:
-        if allergen in ingredients_lower:
+        if allergen in ingredients_lower:  
             return True
     return False 
 

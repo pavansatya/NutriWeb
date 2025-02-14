@@ -5,7 +5,7 @@ import os
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
 DATA_DIR = os.path.join(PROJECT_ROOT, "data")
-
+ 
 # List of columns to keep
 SELECTED_COLS = ['code', 'product_name', 'categories_en', 'ingredients_text',
                  'additives_en', 'nutrition_grade_fr', 'energy_100g', 'fat_100g',
@@ -36,7 +36,7 @@ def load_products(filepath=os.path.join(DATA_DIR, "complete_data_sample.csv"), s
         df.rename(columns={"categories_en": "category"}, inplace=True)
     
     # Debug output: print columns and first few rows
-    print("DEBUG: Cleaned columns:", df.columns.tolist())
-    print("DEBUG: First 5 rows:\n", df.head())
+    #print("DEBUG: Cleaned columns:", df.columns.tolist())
+    #print("DEBUG: First 5 rows:\n", df.head())
     
     return df

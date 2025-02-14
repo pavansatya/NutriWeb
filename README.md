@@ -1,6 +1,6 @@
 # NutriWeb – Smart & Sustainable Food Choices
 
-![Alt Text](https://github.com/Thanvitha/NutriWeb_project/blob/main/images/nutrition.jpeg)
+![Alt Text](https://github.com/Thanvitha/NutriWeb_project/blob/main/images/nutrition.jpeg) 
 
 <!-- TABLE OF CONTENTS -->
 
