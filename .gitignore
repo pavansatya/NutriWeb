@@ -1,1 +1,6 @@
-git rm -r --cached data/
+# Ignore the data folder
+/data/
+
+# Optionally, ignore virtual environment directories
+.venv/
+env/
