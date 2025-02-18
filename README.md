@@ -114,6 +114,18 @@ pip install fuzzywuzzy
 ```bash
 pip install rapidfuzz
 ```
+The following packages are required to execute the notebook:
+```bash
+# Create and install dependencies using pip
+pip install -r requirements.txt  
+
+# Activate the virtual environment (if using venv)
+source venv/bin/activate  # (Linux/macOS)
+venv\Scripts\activate     # (Windows)
+
+# Launch Jupyter Notebook
+jupyter notebook
+```
 
 ## Nutriweb
 
