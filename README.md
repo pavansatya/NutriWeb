@@ -115,6 +115,18 @@ pip install fuzzywuzzy
 pip install rapidfuzz
 ```
 The following packages are required to execute the notebook:
+
+  - python=3.12.7
+  - numpy=1.26.4
+  - pandas=2.2.3
+  - scipy=1.14.1
+  - matplotlib=3.9.2
+  - seaborn=0.13.2
+  - plotly=5.24.1
+  - bokeh=3.6.0
+  - panel=1.5.2
+  - kaleido=0.2.1
+
 ```bash
 # Create and install dependencies using pip
 pip install -r requirements.txt  
