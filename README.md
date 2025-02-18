@@ -174,8 +174,6 @@ Click the link below to view the interactive Plotly visualization:
 
 <IMAGE src="images/bokeh_plot.png" width="600" />
 
-Click the link below to view the interactive Bokeh visualization:
-🔗 [View Interactive Visualization](https://pavansatya.github.io/NutriWeb/dashboard.html)
 
 ## License
 
