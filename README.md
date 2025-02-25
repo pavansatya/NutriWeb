@@ -20,6 +20,7 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
+    <li><a href="#literature review">Literature Review</a></li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#license">License</a></li>
@@ -104,7 +105,43 @@ and, you can access the complete information on the different fields [here](http
 <!-- GETTING STARTED -->
 ## Getting Started
 
-### Literature Review
+### Installation
+
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+
+```bash
+pip install fuzzywuzzy
+```
+```bash
+pip install rapidfuzz
+```
+The following packages are required to execute the notebook:
+
+  - python
+  - numpy
+  - pandas
+  - scipy
+  - matplotlib
+  - seaborn
+  - plotly
+  - bokeh
+  - panel
+  - kaleido
+
+```bash
+# Create and install dependencies using pip
+pip install -r requirements.txt  
+
+# Activate the virtual environment (if using venv)
+source venv/bin/activate  # (Linux/macOS)
+venv\Scripts\activate     # (Windows)
+
+# Launch Jupyter Notebook
+jupyter notebook
+```
+
+<!-- LITERATURE REVIEW -->
+## Literature Review
 
 1) **Diet and Health Management Systems**: Apps like MyFitnessPal track calories and nutrients. They use user data to suggest meals but might not consider sustainability or additives. I should mention studies that focus on calorie counting and nutrient tracking.
 
@@ -123,23 +160,23 @@ Here's a literature review of existing personalized food recommendation systems,
 Key Examples:
 
 -> MyFitnessPal:
-Approach: Tracks calories/macros using user-input data and barcode scanning.
+- Approach: Tracks calories/macros using user-input data and barcode scanning.
 
-Limitation: No sustainability metrics or additive safety analysis.
+- Limitation: No sustainability metrics or additive safety analysis.
 
-Study: Chung et al. (2017) found it lacks dynamic adaptation to user feedback.
+- Study: Chung et al. (2017) found it lacks dynamic adaptation to user feedback.
 
 -> Noom:
 
-Approach: Uses psychology-based coaching to suggest low-calorie meals.
+- Approach: Uses psychology-based coaching to suggest low-calorie meals.
 
-Limitation: Ignores micronutrient balance and eco-impact.
+- Limitation: Ignores micronutrient balance and eco-impact.
 
-Research Gaps:
+-> Research Gaps:
 
-Most systems focus on weight loss, not holistic health (e.g., vitamin deficiencies).
+- Most systems focus on weight loss, not holistic health (e.g., vitamin deficiencies).
 
-Rarely integrate real-time biometric data (e.g., glucose monitors).
+- Rarely integrate real-time biometric data (e.g., glucose monitors).
 
 2) **Allergy and Preference-Based Systems**
 
@@ -147,21 +184,21 @@ Key Examples:
 
 -> Spokin (for food allergies):
 
-Approach: Filters products by allergens (peanuts, gluten) and user preferences.
+- Approach: Filters products by allergens (peanuts, gluten) and user preferences.
 
-Limitation: No BMI or sustainability scoring.
+- Limitation: No BMI or sustainability scoring.
 
 -> Fig (for dietary restrictions):
 
-Approach: Flags additives like E-numbers for users with IBS or celiac disease.
+- Approach: Flags additives like E-numbers for users with IBS or celiac disease.
 
-Study: Smith et al. (2020) criticized its reliance on manual tagging.
+- Study: Smith et al. (2020) criticized its reliance on manual tagging.
 
-Research Gaps:
+-> Research Gaps:
 
-Limited use of NLP to auto-detect allergens/additives from ingredient lists.
+- Limited use of NLP to auto-detect allergens/additives from ingredient lists.
 
-No integration with health metrics (BMI, body fat).
+- No integration with health metrics (BMI, body fat).
 
 3) **AI-Driven Nutritional Assistants**
 
@@ -169,20 +206,21 @@ Key Examples:
 
 -> Spoon Guru:
 
-Approach: Collaborative filtering to suggest recipes based on user preferences.
+- Approach: Collaborative filtering to suggest recipes based on user preferences.
 
-Limitation: Generic recommendations (no personal health metrics).
+- Limitation: Generic recommendations (no personal health metrics).
 
 -> Nutrino:
 
-Approach: ML models predict meals using blood glucose data from wearables.
+- Approach: ML models predict meals using blood glucose data from wearables.
 
-Study: Palaniappan et al. (2019) noted poor transparency in AI decisions.
+- Study: Palaniappan et al. (2019) noted poor transparency in AI decisions.
 
-Research Gaps:
-Few systems use explainable AI (e.g., SHAP/LIME) to justify recommendations.
+-> Research Gaps:
 
-Rarely combine health, ethics (sustainability), and safety (additives) in one platform.
+- Few systems use explainable AI (e.g., SHAP/LIME) to justify recommendations.
+
+- Rarely combine health, ethics (sustainability), and safety (additives) in one platform.
 
 4) **Sustainability-Focused Systems**
 
@@ -190,19 +228,19 @@ Key Examples:
 
 -> Eaternity:
 
-Approach: Scores meals by carbon/water footprint using lifecycle analysis.
+- Approach: Scores meals by carbon/water footprint using lifecycle analysis.
 
-Limitation: No personalization (e.g., BMI, allergies).
+- Limitation: No personalization (e.g., BMI, allergies).
 
 -> Klimat:
 
-Approach: Suggests low-carbon recipes but ignores nutrient density.
+- Approach: Suggests low-carbon recipes but ignores nutrient density.
 
-Research Gaps:
+-> Research Gaps:
 
-Sustainability metrics are rarely weighted against user health needs.
+- Sustainability metrics are rarely weighted against user health needs.
 
-No gamification to incentivize eco-friendly swaps.
+- No gamification to incentivize eco-friendly swaps.
 
 5) **Novel Academic Approaches**
 
@@ -210,24 +248,24 @@ Key Studies:
 
 -> DeepFood (Chen et al., 2021):
 
-Approach: CNN-based food recognition + RL for diet optimization.
+- Approach: CNN-based food recognition + RL for diet optimization.
 
-Limitation: Computationally heavy; no real-world testing.
+- Limitation: Computationally heavy; no real-world testing.
 
 -> FoodAI (Zhang et al., 2020):
 
-Approach: BERT-based NLP to analyze ingredient lists for allergens.
+- Approach: BERT-based NLP to analyze ingredient lists for allergens.
 
-Limitation: Ignores user biometrics (BMI, activity level).
+- Limitation: Ignores user biometrics (BMI, activity level).
 
 -> NutriNet (Gupta et al., 2022):
 
-Approach: Federated learning to personalize diets while preserving privacy.
+- Approach: Federated learning to personalize diets while preserving privacy.
 
-Limitation: No additive safety or sustainability layers.
+- Limitation: No additive safety or sustainability layers.
 
 
-**Critical Research Gaps Your Project Addresses:**
+### Critical Research Gaps Your Project Addresses:
 
 - Multidimensional Scoring: No system combines BMI, sustainability, additive safety, and gamification.
 
@@ -236,7 +274,7 @@ Limitation: No additive safety or sustainability layers.
 - Behavioral Incentives: Gamification in food apps is understudied (see Fan et al., 2021).
 
 
-**Key Papers to Explore**
+### Key Papers to Explore
 
 ->Paper 1:-
 Caroline Gauthier, Frederic Bally,
@@ -275,42 +313,7 @@ keywords: {Logic gates;Genetics;Data models;Recurrent neural networks;Genetic al
 
 Link to the paper: https://ieeexplore.ieee.org/abstract/document/8089390
 
-
-### Installation
-
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
-
-```bash
-pip install fuzzywuzzy
-```
-```bash
-pip install rapidfuzz
-```
-The following packages are required to execute the notebook:
-
-  - python
-  - numpy
-  - pandas
-  - scipy
-  - matplotlib
-  - seaborn
-  - plotly
-  - bokeh
-  - panel
-  - kaleido
-
-```bash
-# Create and install dependencies using pip
-pip install -r requirements.txt  
-
-# Activate the virtual environment (if using venv)
-source venv/bin/activate  # (Linux/macOS)
-venv\Scripts\activate     # (Windows)
-
-# Launch Jupyter Notebook
-jupyter notebook
-```
-
+<!-- USAGE -->
 ## Nutriweb
 
 ### Modules
@@ -337,6 +340,7 @@ jupyter notebook
 ## Gitignore file
 - **.gitignore**: File to ignore the data files in the repository. As the dataset is huge we used the .gitignore file to ignore the data.
 
+<!-- OUTPUT -->
 ## Output 
 
 <IMAGE src="images/nutrition_grades_distribution.png" width="600" />
@@ -346,7 +350,7 @@ Click the link below to view the interactive Plotly visualization:
 
 <IMAGE src="images/bokeh_plot.png" width="600" />
 
-
+<!-- LICENSE -->
 ## License
 
 [Open Food Facts](https://world.openfoodfacts.org/data)
