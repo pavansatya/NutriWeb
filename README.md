@@ -265,7 +265,7 @@ Key Studies:
 - Limitation: No additive safety or sustainability layers.
 
 
-### Critical Research Gaps Your Project Addresses:
+### Critical Research Gaps our Project Addresses:
 
 - Multidimensional Scoring: No system combines BMI, sustainability, additive safety, and gamification.
 
