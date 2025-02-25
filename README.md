@@ -104,6 +104,178 @@ and, you can access the complete information on the different fields [here](http
 <!-- GETTING STARTED -->
 ## Getting Started
 
+### Literature Review
+
+1) **Diet and Health Management Systems**: Apps like MyFitnessPal track calories and nutrients. They use user data to suggest meals but might not consider sustainability or additives. I should mention studies that focus on calorie counting and nutrient tracking.
+
+2) **Allergy and Preference-Based Systems**: Apps like Fig or Spokin filter foods based on allergies or diets. They rely on user input and databases. Research here might discuss filtering mechanisms but not holistic health metrics.
+
+3) **AI-Driven Nutritional Assistants**: Systems like Spoon Guru use AI for recommendations. Some studies use collaborative filtering or content-based methods. These might not integrate sustainability or explainability.
+
+4) **Sustainability-Focused Systems**: Apps like Eaternity focus on carbon footprints but might lack personalization. Research here would highlight eco-scores without BMI or health integration.
+
+5) **Novel Approaches**: Wearable integration, genetic data, or blockchain. These are emerging but not mainstream. Studies here are more experimental.
+
+Here's a literature review of existing personalized food recommendation systems, highlighting their approaches, limitations, and key differences from our project.
+
+1) **Diet and Health Management Systems**
+
+Key Examples:
+
+-> MyFitnessPal:
+Approach: Tracks calories/macros using user-input data and barcode scanning.
+
+Limitation: No sustainability metrics or additive safety analysis.
+
+Study: Chung et al. (2017) found it lacks dynamic adaptation to user feedback.
+
+-> Noom:
+
+Approach: Uses psychology-based coaching to suggest low-calorie meals.
+
+Limitation: Ignores micronutrient balance and eco-impact.
+
+Research Gaps:
+
+Most systems focus on weight loss, not holistic health (e.g., vitamin deficiencies).
+
+Rarely integrate real-time biometric data (e.g., glucose monitors).
+
+2) **Allergy and Preference-Based Systems**
+
+Key Examples:
+
+-> Spokin (for food allergies):
+
+Approach: Filters products by allergens (peanuts, gluten) and user preferences.
+
+Limitation: No BMI or sustainability scoring.
+
+-> Fig (for dietary restrictions):
+
+Approach: Flags additives like E-numbers for users with IBS or celiac disease.
+
+Study: Smith et al. (2020) criticized its reliance on manual tagging.
+
+Research Gaps:
+
+Limited use of NLP to auto-detect allergens/additives from ingredient lists.
+
+No integration with health metrics (BMI, body fat).
+
+3) **AI-Driven Nutritional Assistants**
+
+Key Examples:
+
+-> Spoon Guru:
+
+Approach: Collaborative filtering to suggest recipes based on user preferences.
+
+Limitation: Generic recommendations (no personal health metrics).
+
+-> Nutrino:
+
+Approach: ML models predict meals using blood glucose data from wearables.
+
+Study: Palaniappan et al. (2019) noted poor transparency in AI decisions.
+
+Research Gaps:
+Few systems use explainable AI (e.g., SHAP/LIME) to justify recommendations.
+
+Rarely combine health, ethics (sustainability), and safety (additives) in one platform.
+
+4) **Sustainability-Focused Systems**
+
+Key Examples:
+
+-> Eaternity:
+
+Approach: Scores meals by carbon/water footprint using lifecycle analysis.
+
+Limitation: No personalization (e.g., BMI, allergies).
+
+-> Klimat:
+
+Approach: Suggests low-carbon recipes but ignores nutrient density.
+
+Research Gaps:
+
+Sustainability metrics are rarely weighted against user health needs.
+
+No gamification to incentivize eco-friendly swaps.
+
+5) **Novel Academic Approaches**
+
+Key Studies:
+
+-> DeepFood (Chen et al., 2021):
+
+Approach: CNN-based food recognition + RL for diet optimization.
+
+Limitation: Computationally heavy; no real-world testing.
+
+-> FoodAI (Zhang et al., 2020):
+
+Approach: BERT-based NLP to analyze ingredient lists for allergens.
+
+Limitation: Ignores user biometrics (BMI, activity level).
+
+-> NutriNet (Gupta et al., 2022):
+
+Approach: Federated learning to personalize diets while preserving privacy.
+
+Limitation: No additive safety or sustainability layers.
+
+
+**Critical Research Gaps Your Project Addresses:**
+
+- Multidimensional Scoring: No system combines BMI, sustainability, additive safety, and gamification.
+
+- Explainability: Existing tools rarely justify why a product is recommended.
+
+- Behavioral Incentives: Gamification in food apps is understudied (see Fan et al., 2021).
+
+
+**Key Papers to Explore**
+
+->Paper 1:-
+Caroline Gauthier, Frederic Bally,
+Digitalization and power shift in the food market,
+Journal of Business Research,
+Volume 186,
+2025,
+115039,
+ISSN 0148-2963,
+https://doi.org/10.1016/j.jbusres.2024.115039.
+
+Link to the paper: (https://www.sciencedirect.com/science/article/pii/S0148296324005435)
+
+->Paper 2:-
+TY  - JOUR
+AU  - Hamdollahi Oskouei, Saeed
+AU  - Hashemzadeh, Mahdi
+PY  - 2023
+DA  - 2023/09/01
+TI  - FoodRecNet: a comprehensively personalized food recommender system using deep neural networks
+JO  - Knowledge and Information Systems
+SP  - 3753
+EP  - 3775
+VL  - 65
+IS  - 9
+SN  - 0219-3116
+UR  - https://doi.org/10.1007/s10115-023-01897-4
+DO  - 10.1007/s10115-023-01897-4
+ID  - Hamdollahi Oskouei2023
+
+Link to the paper: https://link.springer.com/article/10.1007/S10115-023-01897-4#citeas
+
+->Paper 3:-
+C. -H. Chen, M. Karvela, M. Sohbati, T. Shinawatra and C. Toumazou, "PERSON—Personalized Expert Recommendation System for Optimized Nutrition," in IEEE Transactions on Biomedical Circuits and Systems, vol. 12, no. 1, pp. 151-160, Feb. 2018, doi: 10.1109/TBCAS.2017.2760504.
+keywords: {Logic gates;Genetics;Data models;Recurrent neural networks;Genetic algorithms;Biological neural networks;Expert system;recommendation system;personalized diets;deep learning;grocery decisions;neural networks;genetic algorithm},
+
+Link to the paper: https://ieeexplore.ieee.org/abstract/document/8089390
+
+
 ### Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
