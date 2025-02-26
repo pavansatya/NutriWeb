@@ -6,7 +6,7 @@ ADDITIVES_WEIGHT = 0.3
 GRADE_WEIGHT = 0.1 
 
 def calculate_nutrition_score(row):
-    """
+    """ 
     Calculates a nutrition score using key nutrient values.
     Negative factors: fat_100g, sugars_100g, salt_100g, cholesterol_100g.
     Positive factors: fiber_100g, proteins_100g.

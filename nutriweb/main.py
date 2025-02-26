@@ -7,7 +7,7 @@ def main():
     # For testing: load only a sample of 100 rows.
     sample_products = load_products(sample_size=100)
     print("Sample Products:")
-    print(sample_products.head())
+    print(sample_products.head())  
    
     # Now, run the recommendation system normally (which may load all rows)
     user_id_example = 1
