@@ -1,6 +1,9 @@
 # Ignore the data folder
 data/
 
+# Igonre the embeddings folder
+embeddings/
+
 # Optionally, ignore virtual environment directories
 .venv/
 env/
