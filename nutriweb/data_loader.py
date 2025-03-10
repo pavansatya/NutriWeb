@@ -17,7 +17,7 @@ SELECTED_COLS = ['code', 'product_name', 'categories_en', 'ingredients_text',
 def load_users(filepath=os.path.join(DATA_DIR, "users.csv")):
     return pd.read_csv(filepath)
 
-def load_products(filepath=os.path.join(DATA_DIR, "complete_data_sample.csv"), sample_size=None):
+def load_products(filepath=os.path.join(DATA_DIR, "products.csv"), sample_size=None):
     """
     Loads the complete_data_sample.csv file, keeps only SELECTED_COLS, cleans column names,
     and renames 'categories_en' to 'category' for consistency.

@@ -1,46 +1,69 @@
-<!DOCTYPE html>
+<!-- templates/recommendations.html -->
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>NutriWeb - Recommendations</title>
+  <title>Product Recommendations</title>
+  <style>
+    .warning { color: red; font-weight: bold; }
+    table, th, td { border: 1px solid #333; border-collapse: collapse; padding: 5px; }
+  </style>
 </head>
 <body>
-  <h1>Results for "{{ target.product_name }}"</h1>
-  <p>Category: {{ target.category }}</p>
-  <p>Your personalized score for this product: {{ target_score | round(2) }}</p>
-  <p>Classification: <strong>{{ target_class }}</strong></p>
-  
-  {% if target_class != "Safe" %}
-    <h2>Recommended Alternatives (Safe Options):</h2>
-    {% if recommendations %}
-      <table border="1" cellspacing="0" cellpadding="5">
-        <thead> 
-          <tr>
-            <th>Product Name</th>
-            <th>Category</th>
-            <th>Personalized Score</th>
-            <th>Classification</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for prod in recommendations %}
-            <tr>
-              <td>{{ prod.product_name }}</td>
-              <td>{{ prod.category }}</td>
-              <td>{{ prod.personalized_score | round(2) }}</td>
-              <td>{{ prod.classification }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <p>No safe alternatives found in this category.</p>
+  {% if error %}
+    <h1>Error</h1>
+    <p>{{ error }}</p>
+    <a href="{{ url_for('index') }}">Back to Search</a>
+  {% elif product %}
+    <h1>{{ product.product_name }}</h1>
+    <p><strong>Brand:</strong> {{ product.brands }}</p>
+    <p><strong>Main Category:</strong> {{ product.category_level_1 }}</p>
+    <p><strong>Overall Classification:</strong> <span>{{ product.classification }}</span></p>
+    
+    {% if product.risk_warning %}
+      <p class="warning">{{ product.risk_warning }}</p>
     {% endif %}
-  {% else %}
-    <p>This product is classified as <strong>Safe</strong>.</p>
+    
+    <h2>Ingredients and Risk Levels:</h2>
+    <ul>
+      {% for ing, risk in product.ingredients %}
+        <li>{{ ing }} – {{ risk }}</li>
+      {% endfor %}
+    </ul>
+    
+    <h2>Additives and Risk Levels:</h2>
+    <ul>
+      {% for add, risk in product.additives %}
+        <li>{{ add }} – {{ risk }}</li>
+      {% endfor %}
+    </ul>
+    
+    {% if product.classification != "Safe" %}
+      <h2>Alternative Recommendations (Same Category):</h2>
+      {% if alternatives and alternatives|length > 0 %}
+        <table>
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Brand</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for alt in alternatives %}
+              <tr>
+                <td>{{ alt.product_name }}</td>
+                <td>{{ alt.brands }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No safe alternatives found in this category.</p>
+      {% endif %}
+    {% else %}
+      <p>This product is rated as <strong>Safe</strong>.</p>
+    {% endif %}
+    <a href="{{ url_for('index') }}">Search Another Product</a>
   {% endif %}
-  
-  <br>
-  <a href="/">Try another product</a>
 </body>
 </html>
