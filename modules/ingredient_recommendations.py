@@ -3,7 +3,7 @@ import faiss
 import numpy as np
 import pandas as pd
 
-def recommend_by_ingredients(user_input, df, top_n=5):
+def recommend_by_ingredients(user_input, df, top_n):
     """
     Recommends products based on ingredient similarity using precomputed embeddings.
 
@@ -29,6 +29,8 @@ def recommend_by_ingredients(user_input, df, top_n=5):
 
     similar_ingredients = [df.iloc[i]['ingredients_text'] for i in indices[0] if 0 <= i < len(df)]
 
-    recommendations = df[df['ingredients_text'].apply(lambda x: any(ingredient in x for ingredient in similar_ingredients))][['product_name', 'additives_en']].head(top_n)
-    return recommendations   
+    recommendations = df[df['ingredients_text'].apply(lambda x: any(ingredient in x for ingredient in similar_ingredients))][['product_name', 'additives_en', 'allergens_en']].head(top_n)
+    return recommendations  
+
+
 
