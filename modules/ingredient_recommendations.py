@@ -23,32 +23,28 @@ def filter_by_allergens(products, allergens_to_avoid):
         if isinstance(allergens, str):
             allergens = [a.replace('en:', '').strip().lower() for a in allergens.split(',')]
             if 'unknown' in allergens:
-                return False  # Ignore products with 'unknown' allergens
+                return False  
         return any(allergen in allergens_to_avoid for allergen in allergens)
     
     return products[~products['allergens_en'].apply(has_allergen_to_avoid)]
 
 def recommend_products(user_input, df, top_n, allergens_to_avoid=[]):
-    # Step 1: Product Name Matching (Assuming 'top_matches' is obtained elsewhere)
     top_matches = [(row['product_name'], 1.0) for _, row in df.iterrows() if user_input.lower() in row['product_name'].lower()][:5]
     
-    # Step 2: Category Filtering
     primary_category, matched_product = find_primary_category_from_matches(top_matches, df)
     
     if primary_category is None:
-        # Fallback to ingredient-based recommendation
         return recommend_by_ingredients(user_input, df, top_n=top_n, allergens_to_avoid=allergens_to_avoid)
     
-    # Step 3: Allergen Filtering (Only if ingredient-based recommendation is NOT triggered)
     filtered_products = df[df['categories_en'].str.contains(primary_category, na=False)]
     
     if allergens_to_avoid:
         filtered_products = filter_by_allergens(filtered_products, allergens_to_avoid)
     
-    # Step 4: Final Recommendations
     return filtered_products[['product_name', 'additives_en', 'allergens_en']].head(top_n)
 
 def recommend_by_ingredients(user_input, df, top_n, allergens_to_avoid=[]):
+        
     ingredient_embeddings = np.load('embeddings/ingredient_embeddings.npy')
     model = SentenceTransformer('all-MiniLM-L6-v2')
     
@@ -57,13 +53,13 @@ def recommend_by_ingredients(user_input, df, top_n, allergens_to_avoid=[]):
     index.add(ingredient_embeddings)  
     
     query_embedding = model.encode([user_input])
-    distances, indices = index.search(query_embedding, top_n*5)
+    distances, indices = index.search(query_embedding, top_n*10)
     
     similar_ingredients = [df.iloc[i]['ingredients_text'] for i in indices[0] if 0 <= i < len(df)]
     
     recommendations = df[df['ingredients_text'].apply(lambda x: any(ingredient in x for ingredient in similar_ingredients))][['product_name', 'additives_en', 'allergens_en']].head(top_n)
-    # Apply allergen filtering
     if allergens_to_avoid:
         recommendations = filter_by_allergens(recommendations, allergens_to_avoid)
 
     return recommendations.head(top_n)
+
