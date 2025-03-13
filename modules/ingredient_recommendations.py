@@ -28,6 +28,12 @@ def filter_by_allergens(products, allergens_to_avoid):
     
     return products[~products['allergens_en'].apply(has_allergen_to_avoid)]
 
+def clean_allergens(allergens):
+    if isinstance(allergens, str):
+        allergens = [a.replace('en:', '').strip() for a in allergens.split(',')]
+        return ', '.join(allergens)
+    return allergens 
+
 def recommend_products(user_input, df, top_n, allergens_to_avoid=[]):
     top_matches = [(row['product_name'], 1.0) for _, row in df.iterrows() if user_input.lower() in row['product_name'].lower()][:5]
     
@@ -61,5 +67,6 @@ def recommend_by_ingredients(user_input, df, top_n, allergens_to_avoid=[]):
     if allergens_to_avoid:
         recommendations = filter_by_allergens(recommendations, allergens_to_avoid)
 
+    recommendations['allergens_en'] = recommendations['allergens_en'].apply(clean_allergens)
     return recommendations.head(top_n)
 
