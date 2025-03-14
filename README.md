@@ -321,7 +321,8 @@ Link to the paper: https://ieeexplore.ieee.org/abstract/document/8089390
 - **data_loader.py**: Module for data handling and processing.
 - **personalization.py**: Module for the personalized recommendations.
 - **recommendations.py**: Module for product recommendations.
-- **scoring.py**: Module for giving a score for the nutrition score.
+- **risk_levels.py**: Module for assigning risk levels like low, moderate and high risks for ingredients and additives.
+- **assess_risk.py**: Module for assessing ingredients and additives risks and then classify the products as "AVOID" and "SAFE" based on the classification..
 
 ## Templates
 
