@@ -322,7 +322,7 @@ Link to the paper: https://ieeexplore.ieee.org/abstract/document/8089390
 - **personalization.py**: Module for the personalized recommendations.
 - **recommendations.py**: Module for product recommendations.
 - **risk_levels.py**: Module for assigning risk levels like low, moderate and high risks for ingredients and additives.
-- **assess_risk.py**: Module for assessing ingredients and additives risks and then classify the products as "AVOID" and "SAFE" based on the classification..
+- **assess_risk.py**: Module for assessing ingredients and additives risks and then classify the products as "AVOID" and "SAFE" based on the classification.
 
 ## Templates
 
