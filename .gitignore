@@ -1,5 +1,5 @@
 # Ignore the data folder
-data/
+#data/
 
 # Igonre the embeddings folder
 embeddings/
