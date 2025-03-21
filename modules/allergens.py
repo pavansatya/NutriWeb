@@ -23,17 +23,15 @@ def find_allergens(ingredients):
     allergens_found = []
     for allergen, keywords in allergen_mapping.items():
         for keyword in keywords:
-            # Use regex to match whole words, case-insensitive
             if re.search(rf'\b{re.escape(keyword)}\b', str(ingredients), flags=re.IGNORECASE):
                 allergens_found.append(f'en:{allergen}')
-                break  # Avoid adding duplicates
+                break  
     return allergens_found
 
 
 # Function to fill missing allergens based on product name and ingredients
 def fill_allergens(row):
     if pd.isna(row['allergens_en']):
-        # Check product name for allergens using regex
         allergens_from_name = []
         for allergen, keywords in allergen_mapping.items():
             for keyword in keywords:
@@ -41,13 +39,10 @@ def fill_allergens(row):
                     allergens_from_name.append(f'en:{allergen}')
                     break
         
-        # Check ingredients for allergens using regex
         allergens_from_ingredients = find_allergens(row['ingredients_text'])
         
-        # Combine allergens from name and ingredients
         all_allergens = list(set(allergens_from_name + allergens_from_ingredients))
         
-        # Return the allergens as a comma-separated string
         return ', '.join(all_allergens) if all_allergens else None
     return row['allergens_en']
 
