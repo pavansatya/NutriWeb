@@ -1,7 +1,7 @@
 # Ignore the data folder
-#data/
+data_ignore/
 
-# Igonre the embeddings folder
+# Ignore the embeddings folder
 embeddings/
 
 # Optionally, ignore virtual environment directories
