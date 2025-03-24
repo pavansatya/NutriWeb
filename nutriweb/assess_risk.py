@@ -16,49 +16,52 @@ def normalize_text(text):
 def classify_item_risk(item_name, risk_map):
     """
     Classify a single ingredient/additive into a risk category.
-    This version uses substring matching for certain keywords.
+    This version uses substring matching so that variations of a key term are captured.
     """
     if not isinstance(item_name, str):
         return UNKNOWN_RISK
-    # Normalize the ingredient string
+    # Normalize the text for consistent matching.
     name = normalize_text(item_name)
     if not name:
         return UNKNOWN_RISK
-    
-    # --- Custom substring check for "bha" ---
-    if "bha" in name:
-        return HIGH_RISK
-    
-    if "phthalates" in name:
-        return HIGH_RISK
-    
-    if "bht" in name:
-        return HIGH_RISK
-    
 
+    # Use substring/regex matching to catch key terms regardless of extra text.
+    # Check for high-risk keywords.
+    high_keywords = ["bha", "phthalates", "bht","high fructose corn syrup","sucralose","potassium bromate","propylparaben","sodium benzoate",
+                     "titanium dioxide","sodium nitrite","red 3","red 40","red 40 lake", "yellow 5", "yellow 5 lake", "yellow 6","blue 1", 
+                     "blue 2", "green 3", "aspartame", "ada", "propylgallate", "methylene chloride", "trichloroethylene", "ethylene dichloride", 
+                     "pfas", "brominated vegetable oil", "sodium nitrate", "acesulfame potassium", "advantame", "neotame", "saccharin"]
+    for kw in high_keywords:
+        # The pattern ensures we match the keyword as a whole word.
+        if re.search(r'\b' + re.escape(kw) + r'\b', name):
+            return HIGH_RISK
 
-    # You can add more substring checks if needed:
-    # if "bht" in name:
-    #     return HIGH_RISK
+    moderate_keywords = ["monosodium glutamate", "carrageenan", "artificial flavours", "color added", "benzoic acid", "sucre", "colorant caramel",
+                         "acidifiant", "panax ginseng extract","sugar", "glucose", "butter"]
+    for kw in moderate_keywords:
+        if re.search(r'\b' + re.escape(kw) + r'\b', name):
+            return "Moderate Risk"
 
-    # --- Default: Try exact match in the risk mapping ---
+    # --- Default: Try exact match in the provided risk mapping ---
     if name in risk_map:
         return risk_map[name]
     
-    # If not found, return unknown risk
+    # If no match is found, return Unknown Risk.
     return UNKNOWN_RISK
 
 def assess_list(text, risk_map):
     """
-    Given a comma-separated string and a risk mapping, return a list of (item, risk) tuples.
+    Given a string of items separated by commas or semicolons and a risk mapping,
+    return a list of (item, risk) tuples.
     """
     if not text or str(text).strip() == "":
         return [("Unknown", UNKNOWN_RISK)]
     norm_text = normalize_text(text)
-    items = [item.strip() for item in norm_text.split(',') if item.strip()]
+    # Split by comma OR semicolon using regex.
+    items = [item.strip() for item in re.split(r'[;,]', norm_text) if item.strip()]
     results = []
     for item in items:
-        # Remove language tags like 'en:' if present
+        # Remove language tags like 'en:' if present.
         clean_item = item.replace("en:", "").strip()
         risk = classify_item_risk(clean_item, risk_map)
         results.append((clean_item, risk))
@@ -78,8 +81,8 @@ def assess_additives_risk(additives_text):
 
 def assess_product_risks(ingredients_text, additives_text):
     """
-    Assess the product's risk by analyzing ingredients and additives.
-    Returns a dictionary containing risk lists and a warning message if unknown risks exceed threshold.
+    Assess the product's risk by analyzing its ingredients and additives.
+    Returns a dictionary containing risk lists and a warning if unknown risks exceed a threshold.
     """
     ing_results = assess_ingredients_risk(ingredients_text)
     add_results = assess_additives_risk(additives_text)
@@ -99,7 +102,8 @@ def assess_product_risks(ingredients_text, additives_text):
 
 def classify_product(ingredients_text, additives_text):
     """
-    Classify a product as 'Avoid' if any ingredient is high risk, 'Caution' if no high-risk ingredients but any additive is high risk,
+    Classify a product as 'Avoid' if any ingredient is high risk,
+    'Caution' if no high-risk ingredients but any additive is high risk,
     and 'Safe' otherwise.
     Returns a tuple: (classification, ingredients_risk_list, additives_risk_list)
     """
