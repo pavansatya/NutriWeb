@@ -49,20 +49,19 @@ def recommend_products(user_input, df, top_n, allergens_to_avoid=[]):
     
     return filtered_products[['product_name', 'additives_en', 'allergens_en']].head(top_n)
 
-def recommend_by_ingredients(user_input, df, top_n, allergens_to_avoid=[]):
 
+def recommend_by_ingredients(user_input, df, top_n, allergens_to_avoid=None):
+    
     ingredient_embeddings = np.load('embeddings/ingredient_embeddings.npy')
-    ingredient_embeddings_normalized = ingredient_embeddings / np.linalg.norm(ingredient_embeddings, axis=1, keepdims=True)
+    model = SentenceTransformer('all-MiniLM-L6-v2')
 
     dimension = ingredient_embeddings.shape[1]
-    index = faiss.IndexFlatIP(dimension)  
-    index.add(ingredient_embeddings_normalized.astype('float32'))  
+    index = faiss.IndexFlatL2(dimension)  
+    index.add(ingredient_embeddings)  
 
-    model = SentenceTransformer('all-MiniLM-L6-v2')
     query_embedding = model.encode([user_input])
-    query_embedding_normalized = query_embedding / np.linalg.norm(query_embedding, axis=1, keepdims=True)
 
-    distances, indices = index.search(query_embedding_normalized.astype('float32'), top_n*10)
+    distances, indices = index.search(query_embedding, top_n*10)
 
     similar_ingredients = [df.iloc[i]['ingredients_text'] for i in indices[0] if 0 <= i < len(df)]
     
@@ -73,5 +72,3 @@ def recommend_by_ingredients(user_input, df, top_n, allergens_to_avoid=[]):
 
     recommendations['allergens_en'] = recommendations['allergens_en'].apply(clean_allergens)
     return recommendations.head(top_n)
-
-
