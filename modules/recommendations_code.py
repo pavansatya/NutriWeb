@@ -80,3 +80,4 @@ def recommend_by_ingredients(ingredients_text, df, top_n=5, allergens_to_avoid=[
     recommendations['allergens_en'] = recommendations['allergens_en'].apply(clean_allergens)
     
     return recommendations.head(top_n)
+
