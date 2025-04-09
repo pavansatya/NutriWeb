@@ -4,7 +4,6 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 
 
-
 def get_primary_category(categories_en):
     if pd.isna(categories_en):
         return None
