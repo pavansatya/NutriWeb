@@ -41,7 +41,7 @@ def name_match_boost(input_name, product_names, boost_value=0.2):
 
 import faiss
 
-def recommend_by_ingredients(ingredients_text, product_name, df, top_n=5, allergens_to_avoid=[], name_weight=0.3, match_boost=0.2):
+def recommend_by_ingredients(ingredients_text, product_name, df, product_code, top_n=5, allergens_to_avoid=[], name_weight=0.3, match_boost=0.2):
     if pd.isna(ingredients_text) or ingredients_text.strip() == "":
         print("⚠️ No ingredients available for ingredient-based recommendations.")
         return None
@@ -66,9 +66,12 @@ def recommend_by_ingredients(ingredients_text, product_name, df, top_n=5, allerg
 
     candidate_rows = df.iloc[indices[0]].copy()
 
+    # Exclude the same product based on code
+    candidate_rows = candidate_rows[candidate_rows['code'] != product_code]
+
     scores = -distances[0]
     boost = name_match_boost(product_name, candidate_rows['product_name'], boost_value=match_boost)
-    final_scores = scores + boost
+    final_scores = scores[:len(candidate_rows)] + boost  # Ensure matching lengths
     candidate_rows['score'] = final_scores
 
     # Allergen filter
@@ -99,6 +102,7 @@ def recommend_products(bar_code, df, top_n=5, allergens_to_avoid=[], name_weight
         product_row.iloc[0]['ingredients_text'],
         product_row.iloc[0]['product_name'],
         df,
+        product_code=bar_code,
         top_n=top_n,
         allergens_to_avoid=allergens_to_avoid,
         name_weight=name_weight,
