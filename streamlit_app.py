@@ -1,51 +1,219 @@
-# streamlit_app.py
 import streamlit as st
 import pandas as pd
+import numpy as np
+import faiss
+import re
+
+# Import our risk analysis functions.
 from nutriweb.assess_risk import classify_product, assess_product_risks
-from nutriweb.recommendations import load_products, get_product_by_name, find_alternatives
+# Import product lookup function (barcode search using the 'code' column).
+from nutriweb.data_loader import get_product_by_code, get_category_slice
+# Import personalization functions.
+from nutriweb.personalization import get_user_profile, personalize_recommendations
+# Import recommendation functions (FAISS-based ingredient similarity) from modules.
+from modules.recommendations import recommend_by_ingredients, recommend_products
 
-# Load data once
+# ------------------------------------------------------------------
+# DATA & FAISS SETUP
 @st.cache_data
-def load_data():
-    return load_products('data/products.csv')
+def load_data(name_weight=0.2):
+    """Load products dataset and precomputed embeddings; return DataFrame and combined embeddings."""
+    df = pd.read_csv("data/cleaned_data.csv", dtype={"code": str})
+    df.reset_index(drop=True, inplace=True)  # Align DataFrame index with embedding array indices.
+    
+    # Load precomputed embeddings (assume alignment by row index)
+    ingredient_emb = np.load("embeddings/ingredient_embeddings.npy").astype('float32')
+    product_name_emb = np.load("embeddings/product_name_embeddings.npy").astype('float32')
+    
+    # Combine embeddings (ingredient weight: 0.8, name weight: 0.2).
+    combined_emb = (1 - name_weight) * ingredient_emb + name_weight * product_name_emb
+    return df, combined_emb
 
-df = load_data()
+df, combined_embeddings = load_data(name_weight=0.2)
 
-st.title("NutriWeb: Personalized Food Recommendations")
+@st.cache_resource
+def create_faiss_index(embeddings: np.ndarray):
+    """Build and return a FAISS index for the provided embeddings using L2 distance."""
+    dim = embeddings.shape[1]
+    index = faiss.IndexFlatL2(dim)
+    index.add(embeddings)
+    return index
 
-product_query = st.text_input("Enter Product Name:")
+faiss_index = create_faiss_index(combined_embeddings)
 
-if st.button("Get Recommendations"):
-    if not product_query:
-        st.warning("Please enter a product name.")
-    else:
-        product = get_product_by_name(product_query, df)
-        
-        if not product:
-            st.error("No product found with that name.")
+# ------------------------------------------------------------------
+# SIDEBAR: USER PROFILE INPUT
+st.sidebar.header("User Health Profile")
+age = st.sidebar.number_input("Age", min_value=0, max_value=120, value=30)
+gender = st.sidebar.selectbox("Gender", options=["Male", "Female", "Other"])
+height = st.sidebar.number_input("Height (cm)", min_value=0, max_value=300, value=170)
+weight = st.sidebar.number_input("Weight (kg)", min_value=0, max_value=500, value=70)
+dietary_restrictions = st.sidebar.multiselect("Dietary Restrictions", ["Vegetarian", "Vegan"])
+allergen_options = ["Gluten", "Peanuts", "Soy", "Dairy", "Eggs", "Shellfish", "Fish", "Tree Nuts"]
+allergens = st.sidebar.multiselect("Allergens (food allergies)", allergen_options)
+high_bp = st.sidebar.checkbox("High Blood Pressure")     # if checked, user has high BP
+high_chol = st.sidebar.checkbox("High Cholesterol")      # if checked, user has high cholesterol
+
+# Save user profile in session state.
+if "user_profile" not in st.session_state:
+    st.session_state.user_profile = get_user_profile(
+        age=age,
+        gender=gender,
+        height=height,
+        weight=weight,
+        cholesterol="High" if high_chol else "Normal",
+        blood_pressure="High" if high_bp else "Normal",
+        allergens=",".join(allergens),
+        diet_type=",".join(dietary_restrictions)
+    )
+
+# ------------------------------------------------------------------
+# MAIN: PRODUCT SEARCH
+st.title("NutriWeb: Personalized Food Products Recommendation System")
+search_mode = st.radio("Search for a product by:", ["Product Name", "Barcode"])
+query = st.text_input("Enter product {}:".format("name" if search_mode=="Product Name" else "barcode"))
+
+selected_product = None
+if query:
+    if search_mode == "Product Name":
+        matches = df[df['product_name'].str.contains(query, case=False, na=False)]
+        if matches.empty:
+            st.warning("No products found with that name. Please try a different query.")
+        elif len(matches) > 1:
+            product_choice = st.selectbox("Select a product", matches['product_name'].unique())
+            if product_choice:
+                selected_product = df[df['product_name'] == product_choice].iloc[0]
         else:
-            classification, ing_risks, add_risks = classify_product(product['ingredients'], product['additives_en'])
-            risk_details = assess_product_risks(product['ingredients'], product['additives_en'])
+            selected_product = matches.iloc[0]
+    else:  # Barcode search
+        matches = df[df['code'].astype(str) == str(query).strip()]
+        if matches.empty:
+            st.warning("No product found with that barcode. Please try a different code.")
+        else:
+            selected_product = matches.iloc[0]
+            st.write(f"**Product found:** {selected_product['product_name']}")
 
-            st.subheader(product['product_name'])
-            st.write(f"**Brand:** {product['brands']}")
-            st.write(f"**Classification:** {classification}")
-
-            if risk_details['warning']:
-                st.warning(risk_details['warning'])
-
-            st.write("**Ingredients Risk:**")
-            st.table(pd.DataFrame(ing_risks, columns=['Ingredient', 'Risk']))
-
-            st.write("**Additives Risk:**")
-            st.table(pd.DataFrame(add_risks, columns=['Additive', 'Risk']))
-
-            if classification != "Safe":
-                alternatives = find_alternatives(product, df)
-                if alternatives:
-                    st.write("### Safer Alternatives:")
-                    alt_df = pd.DataFrame(alternatives)[['product_name', 'brands']]
-                    st.table(alt_df)
+# ------------------------------------------------------------------
+# IF PRODUCT IS SELECTED, DISPLAY ANALYSIS & RECOMMENDATIONS
+if selected_product is not None:
+    # Display product header (name and brand, if available)
+    product_name = selected_product.get("product_name", "Unknown Product")
+    product_brand = selected_product.get("brands") if "brands" in selected_product else None
+    if pd.notna(product_brand) and product_brand not in [None, "", np.nan]:
+        st.header(f"{product_brand} – {product_name}")
+    else:
+        st.header(product_name)
+    
+    # --- RISK ASSESSMENT (Single Block) ---
+    classification, ing_risks, add_risks = classify_product(
+        selected_product.get("ingredients_text", ""),
+        selected_product.get("additives_en", "")
+    )
+    risk_details = assess_product_risks(
+        selected_product.get("ingredients_text", ""),
+        selected_product.get("additives_en", "")
+    )
+    # PERSONALIZED ALLERGEN OVERRIDE:
+    # Convert the allergens stored in the user profile to a list.
+    user_allergens_data = st.session_state.user_profile.get("allergens", "")
+    if isinstance(user_allergens_data, str):
+        user_allergens_list = [a.strip().lower() for a in user_allergens_data.split(",") if a.strip()]
+    else:
+        user_allergens_list = [a.strip().lower() for a in user_allergens_data]
+    
+    cleaned_ingredients = str(selected_product.get("ingredients_text", "")).lower()
+    if user_allergens_list and any(allergen in cleaned_ingredients for allergen in user_allergens_list):
+        classification = "Avoid"
+        risk_details["warning"] = "This product contains allergens you are sensitive to."
+    
+    st.subheader("General Risk Assessment")
+    st.write(f"**Classification:** {classification}")
+    if risk_details.get("warning"):
+        st.error(risk_details.get("warning"))
+    st.subheader("Ingredient Risk Analysis")
+    if ing_risks:
+        st.table(pd.DataFrame(list(ing_risks.items()), columns=["Ingredient", "Risk"]))
+    else:
+        st.write("No ingredient-level risks identified.")
+    st.subheader("Additive Risk Analysis")
+    if add_risks:
+        st.table(pd.DataFrame(list(add_risks.items()), columns=["Additive", "Risk"]))
+    else:
+        st.write("No additive-level risks identified.")
+    
+    # --- PERSONALIZED INGREDIENT-BASED ALTERNATIVES ---
+    st.subheader("Personalized Ingredient-Based Alternatives")
+    user_profile = st.session_state.user_profile
+    # If the user has provided allergens, use category-level allergen substitution.
+    if user_profile.get("allergens"):
+        # Traverse category hierarchy from level 6 down to level 1.
+        found_category = False
+        allergen_category_level = None
+        matched_allergen = None
+        for lvl in range(6, 0, -1):
+            cat_value = selected_product.get(f"category_level_{lvl}", "")
+            if cat_value and any(allergen in cat_value.lower() for allergen in user_allergens_list):
+                found_category = True
+                allergen_category_level = lvl
+                for allergen in user_allergens_list:
+                    if allergen in cat_value.lower():
+                        matched_allergen = allergen
+                        break
+                break
+        if found_category and allergen_category_level:
+            st.write(f"**Allergen-Friendly Alternatives:** (Products in '{selected_product.get(f'category_level_{allergen_category_level}', '')}' without '{matched_allergen}')")
+            alt_df = get_category_slice(selected_product, allergen_category_level)
+            # Exclude products containing any user allergens in ingredients_text.
+            pattern = "|".join([re.escape(a) for a in user_allergens_list])
+            if pattern:
+                alt_df = alt_df[~alt_df["ingredients_text"].str.lower().str.contains(pattern, na=False)]
+            alt_df = alt_df[alt_df["code"] != selected_product["code"]]
+            if not alt_df.empty:
+                st.table(alt_df[["product_name", "brands", "ingredients_text"]].head(5))
+            else:
+                st.write("No allergen-friendly alternatives found in this category.")
+        else:
+            # Fall back to FAISS-based recommendations.
+            cur_index_list = df.index[df["code"] == selected_product["code"]].tolist()
+            if cur_index_list:
+                cur_index = cur_index_list[0]
+                query_vector = combined_embeddings[cur_index:cur_index+1]
+                k = 20  # retrieve extra candidates.
+                distances, indices = faiss_index.search(query_vector, k)
+                indices_list = indices[0].tolist() if indices.size > 0 else []
+                if cur_index in indices_list:
+                    indices_list.remove(cur_index)
+                candidates = df.iloc[indices_list].copy()
+                # Filter candidates based on user's allergens.
+                avoid_list = set([a.strip().lower() for a in user_allergens_list])
+                def candidate_filter(row):
+                    ing_txt = str(row.get("ingredients_text", "")).lower()
+                    for allergen in avoid_list:
+                        if allergen in ing_txt:
+                            return False
+                    return True
+                filtered_candidates = candidates[candidates.apply(candidate_filter, axis=1)]
+                if not filtered_candidates.empty:
+                    st.table(filtered_candidates[["product_name", "brands"]].head(5))
                 else:
-                    st.info("No safer alternatives found.")
+                    st.write("No suitable personalized alternatives were found for this product.")
+            else:
+                st.write("Error: Could not determine product index for recommendations.")
+    else:
+        # If no allergens specified, use FAISS-based recommendations directly.
+        cur_index_list = df.index[df["code"] == selected_product["code"]].tolist()
+        if cur_index_list:
+            cur_index = cur_index_list[0]
+            query_vector = combined_embeddings[cur_index:cur_index+1]
+            k = 20
+            distances, indices = faiss_index.search(query_vector, k)
+            indices_list = indices[0].tolist() if indices.size > 0 else []
+            if cur_index in indices_list:
+                indices_list.remove(cur_index)
+            candidates = df.iloc[indices_list].copy()
+            st.table(candidates[["product_name", "brands"]].head(5))
+        else:
+            st.write("Error: Could not determine product index for recommendations.")
 
+st.write("----")
+st.write("Developed with NutriWeb – Personalized Food Recommendations")

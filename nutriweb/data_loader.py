@@ -1,42 +1,43 @@
-# nutriweb/data_loader.py
 import pandas as pd
-import os
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
-DATA_DIR = os.path.join(PROJECT_ROOT, "data")
+# Load the product dataset (using 'data/cleaned_data.csv') ensuring that 'code' is a string.
+PRODUCT_DF = pd.read_csv('data/cleaned_data.csv', dtype={'code': str})
 
-# List of columns to keep
-SELECTED_COLS = ['code', 'product_name', 'categories_en', 'ingredients_text',
-                 'additives_en', 'nutrition_grade_fr', 'energy_100g', 'fat_100g',
-                 'sugars_100g', 'proteins_100g', 'salt_100g', 'carbohydrates_100g',
-                 'cholesterol_100g', 'fiber_100g', 'sodium_100g', 'vitamin-a_100g',
-                 'vitamin-c_100g', 'vitamin-b1_100g', 'vitamin-b2_100g',
-                 'vitamin-pp_100g', 'vitamin-b9_100g', 'iron_100g']
-
-def load_users(filepath=os.path.join(DATA_DIR, "users.csv")):
-    return pd.read_csv(filepath)
-
-def load_products(filepath=os.path.join(DATA_DIR, "products.csv"), sample_size=None):
+def get_product_by_code(barcode: str):
     """
-    Loads the complete_data_sample.csv file, keeps only SELECTED_COLS, cleans column names,
-    and renames 'categories_en' to 'category' for consistency.
+    Return product details (as a dict) for a given barcode.
+    Normalize the barcode by stripping spaces and zero-padding if needed.
     """
-    read_kwargs = {"on_bad_lines": "skip"}
-    if sample_size is not None:
-        read_kwargs["nrows"] = sample_size
-        
-    df = pd.read_csv(filepath, usecols=SELECTED_COLS, **read_kwargs)
-    
-    # Clean column names: strip whitespace and convert to lowercase
-    df.columns = df.columns.str.strip().str.lower()
-    
-    # Rename 'categories_en' to 'category'
-    if "categories_en" in df.columns:
-        df.rename(columns={"categories_en": "category"}, inplace=True)
-    
-    # Debug output: print columns and first few rows
-    #print("DEBUG: Cleaned columns:", df.columns.tolist())
-    #print("DEBUG: First 5 rows:\n", df.head())
-    
-    return df
+    code_str = str(barcode).strip()
+    if code_str.isdigit() and len(code_str) < 13:
+        code_str = code_str.zfill(13)
+    result = PRODUCT_DF[PRODUCT_DF['code'] == code_str]
+    if not result.empty:
+        return result.iloc[0].to_dict()
+    # Fallback: if code starts with zero, try removing it.
+    if code_str.startswith('0'):
+        result = PRODUCT_DF[PRODUCT_DF['code'] == code_str.lstrip('0')]
+        if not result.empty:
+            return result.iloc[0].to_dict()
+    return None
+
+def get_index_by_code(barcode: str) -> int:
+    """Return the DataFrame index for the product matching the barcode."""
+    code_str = str(barcode).strip()
+    result_idx = PRODUCT_DF.index[PRODUCT_DF['code'] == code_str]
+    if len(result_idx) == 0:
+        return None
+    return result_idx[0]
+
+def get_category_slice(product: dict, level: int):
+    """
+    Return all products in the same category (specified by category_level_{level}) as the given product.
+    If the category field is missing or empty, return the full dataset.
+    """
+    cat_col = f'category_level_{level}'
+    if cat_col not in PRODUCT_DF.columns:
+        return PRODUCT_DF
+    cat_value = product.get(cat_col)
+    if not cat_value:
+        return PRODUCT_DF
+    return PRODUCT_DF[PRODUCT_DF[cat_col] == cat_value]

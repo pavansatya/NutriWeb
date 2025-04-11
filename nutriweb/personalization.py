@@ -1,82 +1,84 @@
-# nutriweb/personalization.py
+from nutriweb.risk_levels import RISK_LEVELS
 import pandas as pd
 
-def has_allergy_conflict(user_allergies, ingredients_text):
+def profile_specific_avoid_list(profile: dict) -> set:
     """
-    Checks if any allergens specified by the user appear in the ingredients.
-    Both inputs are assumed to be comma-separated strings.
+    Create a set of ingredients that the user must avoid based on:
+      - Allergens (always avoid),
+      - Dietary restrictions (e.g., for vegetarians/vegans),
+      - Health conditions (e.g., high cholesterol or high blood pressure).
     """
-    if pd.isna(user_allergies) or user_allergies.strip() == "":
-        return False
-    user_allergy_set = {a.strip().lower() for a in user_allergies.split(",")}
-    if pd.isna(ingredients_text) or ingredients_text.strip() == "":
-        return False
-    ingredients_lower = ingredients_text.lower()
-    for allergen in user_allergy_set:
-        if allergen in ingredients_lower:
-            return True
-    return False
+    avoid_set = set()
+    # Allergens: strictly avoid any product containing these.
+    for allergen in profile.get("allergens", []):
+        avoid_set.add(allergen.lower())
+    # Dietary restrictions:
+    diet = [d.lower() for d in profile.get("dietary_restrictions", [])]
+    if "vegetarian" in diet or "vegan" in diet:
+        avoid_set.update(["meat", "gelatin", "fish", "chicken", "beef", "pork"])
+    if "vegan" in diet:
+        avoid_set.update(["milk", "egg", "honey", "cheese", "butter"])
+    if "gluten-free" in diet:
+        avoid_set.update(["wheat", "barley", "rye", "malt"])
+    # Health conditions:
+    if profile.get("cholesterol", "").lower() == "high":
+        avoid_set.update(["palm oil", "butter", "lard", "hydrogenated", "coconut oil"])
+    if profile.get("blood_pressure", "").lower() == "high":
+        avoid_set.update(["salt", "sodium", "sodium benzoate"])
+    return avoid_set
 
-def personalized_adjustment(user, product):
+def assess_product_for_user(product_ingredients: list[str], base_risk: dict, profile: dict) -> dict:
     """
-    Adjusts the product's base score based on the user's parameters.
-    - Penalizes products with high cholesterol_100g if user's cholesterol is high (>200).
-    - Penalizes products with high salt_100g if user's blood pressure is high (>130).
-    - Penalizes products with high energy relative to the user's daily calorie intake.
-    - For a vegan user, applies a penalty if non-vegan ingredients appear.
+    Adjust a product's risk assessment based on the user's profile.
+    If any ingredient is in the user's avoid list, mark the product as 'Avoid' and record the reason.
+    Returns a dictionary with:
+      - 'user_overall_risk': (Safe, Caution, or Avoid),
+      - 'flags': a list of reasons.
     """
-    adjustment = 0.0
+    user_overall = base_risk.get("overall_risk", "Safe")
+    flags = []
+    avoid_set = profile_specific_avoid_list(profile)
+    for ing in product_ingredients:
+        name = ing.lower()
+        if name in avoid_set:
+            flags.append(f"contains '{ing}' which you should avoid")
+            user_overall = "Avoid"
+        elif base_risk["ingredient_risks"].get(ing, "") == "Caution":
+            flags.append(f"contains '{ing}' marked for caution")
+            if user_overall == "Safe":
+                user_overall = "Caution"
+    return {"user_overall_risk": user_overall, "flags": flags}
 
-    # Cholesterol penalty
-    if user["cholesterol"] > 200:
-        adjustment -= product.get("cholesterol_100g", 0) * 1.0
-
-    # Blood pressure penalty
-    if user["blood_pressure"] > 130:
-        adjustment -= product.get("salt_100g", 0) * 1.0
-
-    # Calorie adjustment: if product energy is high relative to daily calorie intake
-    daily_cal = user.get("daily_calorie_intake", 2000)
-    energy = product.get("energy_100g", 0)
-    if energy > 0.05 * daily_cal:
-        adjustment -= (energy / daily_cal) * 10
-
-    # Vegan adjustment: if the user is vegan, penalize non-vegan ingredients.
-    diettype = user.get("diettype", "").lower()
-    if diettype == "vegan":
-        ingredients = product.get("ingredients_text", "").lower()
-        non_vegan_keywords = ["milk", "cheese", "egg", "meat", "honey", "chicken", "beef", "pork", "gelatin"]
-        for keyword in non_vegan_keywords:
-            if keyword in ingredients:
-                adjustment -= 5  # apply a penalty once
-                break
-
-    return adjustment
-
-def compute_personalized_score(user, product, base_score):
+def get_user_profile(age: int, gender: str, height: float, weight: float,
+                     cholesterol: str, blood_pressure: str, allergens: str, diet_type: str) -> dict:
     """
-    Computes the final personalized score by adjusting the base score.
-    If there's an allergen conflict, returns a very low score (-999).
-    Clamps negative scores to 0.
+    Create a user profile dictionary from inputs.
+    'allergens' and 'dietary_restrictions' are stored as lists.
     """
-    if has_allergy_conflict(user.get("allergies", ""), product.get("ingredients_text", "")):
-        return -999
-    adjustment = personalized_adjustment(user, product)
-    score = base_score + adjustment
-    # Clamp negative values to 0
-    return max(0, score)
+    return {
+        "age": age,
+        "gender": gender,
+        "height": height,
+        "weight": weight,
+        "cholesterol": cholesterol,
+        "blood_pressure": blood_pressure,
+        "allergens": [a.strip() for a in allergens.split(',') if a.strip()],
+        "dietary_restrictions": [d.strip() for d in diet_type.split(',') if d.strip()]
+    }
 
-def classify_score(score):
+def personalize_recommendations(user_profile: dict, df: pd.DataFrame, top_n: int = 5) -> pd.DataFrame:
     """
-    Classifies the (clamped) score into:
-      - "Safe" if score >= 70,
-      - "Caution" if score is between 40 and 69,
-      - "Avoid" if score is below 40.
+    Filter the products DataFrame to return only those that do NOT contain any ingredients 
+    from the user's avoid list. This function now uses the "ingredients_text" column.
     """
-    score = max(0, score)  # Ensure score is not negative
-    if score >= 70:
-        return "Safe"
-    elif score >= 40:
-        return "Caution"
-    else:
-        return "Avoid"
+    avoid_list = profile_specific_avoid_list(user_profile)
+    
+    def is_product_safe(row):
+        ingredients = row.get("ingredients_text", "")
+        if not ingredients:
+            return True  # If missing, assume safe.
+        ing_list = [ing.strip().lower() for ing in ingredients.split(",") if ing.strip()]
+        return not any(ing in avoid_list for ing in ing_list)
+    
+    filtered_df = df[df.apply(is_product_safe, axis=1)]
+    return filtered_df.head(top_n)
