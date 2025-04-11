@@ -40,46 +40,57 @@ def name_match_boost(input_name, product_names, boost_value=0.2):
 
 import faiss
 
+
 def recommend_by_ingredients(ingredients_text, product_name, df, product_code, top_n=5, allergens_to_avoid=[], name_weight=0.3, match_boost=0.2):
     if pd.isna(ingredients_text) or ingredients_text.strip() == "":
         print("⚠️ No ingredients available for ingredient-based recommendations.")
         return None
 
-    # Load embeddings
     MODEL = SentenceTransformer('all-MiniLM-L6-v2')
+
+    # Load and normalize precomputed embeddings
     ingredient_embeddings = np.load('embeddings/ingredient_embeddings.npy')
     name_embeddings = np.load('embeddings/product_name_embeddings.npy')
 
-    ingredient_query = MODEL.encode([ingredients_text])[0]
-    name_query = MODEL.encode([product_name])[0]
-    combined_query = (1 - name_weight) * ingredient_query + name_weight * name_query
+    # Normalize the loaded embeddings
+    def normalize_matrix(m):
+        return m / np.linalg.norm(m, axis=1, keepdims=True)
 
+    ingredient_embeddings = normalize_matrix(ingredient_embeddings)
+    name_embeddings = normalize_matrix(name_embeddings)
+
+    # Combine normalized embeddings, then normalize again
     combined_embeddings = (1 - name_weight) * ingredient_embeddings + name_weight * name_embeddings
+    combined_embeddings = normalize_matrix(combined_embeddings)
 
-    # FAISS indexing
+    # Encode and normalize queries
+    ingredient_query = MODEL.encode([ingredients_text], normalize_embeddings=True)[0]
+    name_query = MODEL.encode([product_name], normalize_embeddings=True)[0]
+
+    combined_query = (1 - name_weight) * ingredient_query + name_weight * name_query
+    combined_query = combined_query / np.linalg.norm(combined_query)
+
+    # FAISS search with cosine similarity
     dimension = combined_query.shape[0]
-    index = faiss.IndexFlatL2(dimension)
+    index = faiss.IndexFlatIP(dimension)
     index.add(combined_embeddings)
 
     distances, indices = index.search(np.array([combined_query]), top_n * 20)
-
     candidate_rows = df.iloc[indices[0]].copy()
-
-    # Exclude the same product based on code
     candidate_rows = candidate_rows[candidate_rows['code'] != product_code]
 
-    scores = -distances[0]
+    scores = distances[0]
     boost = name_match_boost(product_name, candidate_rows['product_name'], boost_value=match_boost)
-    final_scores = scores[:len(candidate_rows)] + boost  # Ensure matching lengths
+    final_scores = scores[:len(candidate_rows)] + boost
     candidate_rows['score'] = final_scores
 
-    # Allergen filter
     if allergens_to_avoid:
         candidate_rows = filter_by_allergens(candidate_rows, allergens_to_avoid)
 
     candidate_rows['allergens_en'] = candidate_rows['allergens_en'].apply(clean_allergens)
 
     return candidate_rows.sort_values('score', ascending=False)[['product_name', 'additives_en', 'allergens_en']].head(top_n)
+
 
 def recommend_products(bar_code, df, top_n=5, allergens_to_avoid=[], name_weight=0.3, match_boost=0.2):
     product_row = df[df['code'] == bar_code]
