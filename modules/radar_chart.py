@@ -1,35 +1,32 @@
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+
 def preprocess_data(data, category_col, nutrient_cols, top_n=10):
-    
     results = []
     top_categories = data[category_col].value_counts().nlargest(top_n).index
-    
-    # Process each category separately
-    for category in top_categories:
-        category_data = data[data[category_col] == category].copy()
-        
-        # Scale each nutrient using category's 5th-95th percentiles
-        scaled_values = []
-        for col in nutrient_cols:
-            # Calculate percentiles for this category+nutrient
-            low = category_data[col].quantile(0.05)
-            high = category_data[col].quantile(0.95)
-            
-            # Clip and scale
-            scaled_col = (category_data[col].clip(low, high) - low) / (high - low)
-            scaled_values.append(scaled_col)
-        
-        # Combine results
-        scaled_df = pd.DataFrame(dict(zip(nutrient_cols, scaled_values)))
-        scaled_df[category_col] = category
-        results.append(scaled_df)
-    
-    # Combine all categories
-    return pd.concat(results).groupby(category_col)[nutrient_cols].mean().reset_index()
+
+    # Step 1: Compute global 5th and 95th percentiles for each nutrient
+    global_low = {col: data[col].quantile(0.05) for col in nutrient_cols}
+    global_high = {col: data[col].quantile(0.95) for col in nutrient_cols}
+
+    # Step 2: Clip and scale globally
+    clipped_scaled_data = pd.DataFrame()
+    for col in nutrient_cols:
+        low = global_low[col]
+        high = global_high[col]
+        clipped_col = data[col].clip(low, high)
+        scaled_col = (clipped_col - low) / (high - low)
+        clipped_scaled_data[col] = scaled_col
+
+    # Step 3: Add category column back
+    clipped_scaled_data[category_col] = data[category_col]
+
+    # Step 4: Filter to top N categories and group by category
+    filtered_data = clipped_scaled_data[clipped_scaled_data[category_col].isin(top_categories)]
+    return filtered_data.groupby(category_col)[nutrient_cols].mean().reset_index()
+
 
 def create_radar_chart(categories, values, title):
     fig = go.Figure()
