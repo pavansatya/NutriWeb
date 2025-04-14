@@ -8,3 +8,4 @@ sentence-transformers==3.4.1
 tokenizers==0.21.0
 transformers==4.49.0
 faiss-cpu == 1.10.0
+streamlit==1.44.1
