@@ -129,13 +129,16 @@ The following packages are required to execute the notebook:
   - kaleido
 
 ```bash
-# Create and install dependencies using pip
-pip install -r requirements.txt  
-
 # Activate the virtual environment (if using venv)
 source venv/bin/activate  # (Linux/macOS)
 venv\Scripts\activate     # (Windows)
 
+# Create and install dependencies using pip
+pip install -r requirements.txt
+
+# Install dependencies from Poetry
+poetry install
+ 
 # Launch Jupyter Notebook
 jupyter notebook
 ```
