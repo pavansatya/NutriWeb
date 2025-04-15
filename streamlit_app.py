@@ -45,8 +45,8 @@ def load_data(name_weight=0.2):
     """Load products dataset and precomputed embeddings; return DataFrame and combined embeddings."""
     
     # Ensure local paths exist
-    os.makedirs("embeddings", exist_ok=True)
-    os.makedirs("data", exist_ok=True)
+    os.makedirs("my_embeddings", exist_ok=True)
+    os.makedirs("useful_data", exist_ok=True)
 
     # Download files from Google Drive if missing
     download_from_gdrive("1KzrZGV2baWvI2-4NoqBgd2UKyyqG73tz", "my_embeddings/ingredient_embeddings.npy")
