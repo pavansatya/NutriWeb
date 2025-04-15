@@ -35,6 +35,10 @@ def download_from_gdrive(file_id, dest_path):
     if os.path.exists(dest_path):
         return
     print(f"Downloading {dest_path} from Google Drive...")
+
+    # Create parent directory if it doesn't exist
+    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+
     url = f"https://drive.google.com/uc?id={file_id}"
     response = requests.get(url, allow_redirects=True)
     if response.status_code == 200:
