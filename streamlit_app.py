@@ -63,8 +63,8 @@ def load_data(name_weight=0.2):
     df = pd.read_csv("useful_data/output.csv", dtype={"code": str})
     df.reset_index(drop=True, inplace=True)
 
-    ingredient_emb = np.load("my_embeddings/ingredient_embeddings.npy").astype('float32')
-    product_name_emb = np.load("my_embeddings/product_name_embeddings.npy").astype('float32')
+    ingredient_emb = np.load("my_embeddings/ingredient_embeddings.npy", allow_pickle=True).astype('float32')
+    product_name_emb = np.load("my_embeddings/product_name_embeddings.npy", allow_pickle=True).astype('float32')
 
     combined_emb = (1 - name_weight) * ingredient_emb + name_weight * product_name_emb
     return df, combined_emb
