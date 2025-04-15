@@ -17,19 +17,6 @@ from modules.recommendations import recommend_by_ingredients, recommend_products
 
 # ------------------------------------------------------------------
 # DATA & FAISS SETUP
-# @st.cache_data
-# def load_data(name_weight=0.2):
-#     """Load products dataset and precomputed embeddings; return DataFrame and combined embeddings."""
-#     df = pd.read_csv("/Users/krishvenigalla/Desktop/Object_detection/data/output.csv", dtype={"code": str})
-#     df.reset_index(drop=True, inplace=True)  # Align DataFrame index with embedding array indices.
-    
-#     # Load precomputed embeddings (assume alignment by row index)
-#     ingredient_emb = np.load("embeddings/ingredient_embeddings.npy").astype('float32')
-#     product_name_emb = np.load("embeddings/product_name_embeddings.npy").astype('float32')
-    
-#     # Combine embeddings (ingredient weight: 0.8, name weight: 0.2).
-#     combined_emb = (1 - name_weight) * ingredient_emb + name_weight * product_name_emb
-#     return df, combined_emb
 
 def download_from_gdrive(file_id, dest_path):
     if os.path.exists(dest_path):
