@@ -34,18 +34,21 @@ from modules.recommendations import recommend_by_ingredients, recommend_products
 def download_from_gdrive(file_id, dest_path):
     if os.path.exists(dest_path):
         return
-    print(f"Downloading {dest_path} from Google Drive...")
 
-    # Create parent directory if it doesn't exist
+    print(f"Downloading {dest_path} from Google Drive...")
+    
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
 
-    url = f"https://drive.google.com/uc?id={file_id}"
-    response = requests.get(url, allow_redirects=True)
-    if response.status_code == 200:
-        with open(dest_path, 'wb') as f:
-            f.write(response.content)
-    else:
-        raise Exception(f"Failed to download {dest_path}")
+    # Use the "export=download" workaround
+    url = f"https://drive.google.com/uc?export=download&id={file_id}"
+    r = requests.get(url, allow_redirects=True)
+
+    # Save only if it's a real file (not HTML)
+    if "text/html" in r.headers.get("Content-Type", ""):
+        raise ValueError(f"⚠️ Downloaded file looks like HTML, not raw data. ID: {file_id}")
+
+    with open(dest_path, 'wb') as f:
+        f.write(r.content)
     
 @st.cache_data
 def load_data(name_weight=0.2):
@@ -63,8 +66,8 @@ def load_data(name_weight=0.2):
     df = pd.read_csv("useful_data/output.csv", dtype={"code": str})
     df.reset_index(drop=True, inplace=True)
 
-    ingredient_emb = np.load("my_embeddings/ingredient_embeddings.npy", allow_pickle=True).astype('float32')
-    product_name_emb = np.load("my_embeddings/product_name_embeddings.npy", allow_pickle=True).astype('float32')
+    ingredient_emb = np.load("my_embeddings/ingredient_embeddings.npy").astype('float32')
+    product_name_emb = np.load("my_embeddings/product_name_embeddings.npy").astype('float32')
 
     combined_emb = (1 - name_weight) * ingredient_emb + name_weight * product_name_emb
     return df, combined_emb
