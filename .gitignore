@@ -2,7 +2,7 @@
 data_ignore/
 data/
 # Ignore the embeddings folder
-# embeddings/
+embeddings/
 
 # Optionally, ignore virtual environment directories
 .venv/
