@@ -4,7 +4,7 @@ import numpy as np
 import faiss
 import re
 import os
-import requests
+import gdown
 
 # Import our risk analysis functions.
 from nutriweb.assess_risk import classify_product, assess_product_risks
@@ -35,20 +35,10 @@ def download_from_gdrive(file_id, dest_path):
     if os.path.exists(dest_path):
         return
 
-    print(f"Downloading {dest_path} from Google Drive...")
-    
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-
-    # Use the "export=download" workaround
-    url = f"https://drive.google.com/uc?export=download&id={file_id}"
-    r = requests.get(url, allow_redirects=True)
-
-    # Save only if it's a real file (not HTML)
-    if "text/html" in r.headers.get("Content-Type", ""):
-        raise ValueError(f"⚠️ Downloaded file looks like HTML, not raw data. ID: {file_id}")
-
-    with open(dest_path, 'wb') as f:
-        f.write(r.content)
+    url = f"https://drive.google.com/uc?id={file_id}"
+    print(f"Downloading {dest_path} using gdown...")
+    gdown.download(url, dest_path, quiet=False)
     
 @st.cache_data
 def load_data(name_weight=0.2):
