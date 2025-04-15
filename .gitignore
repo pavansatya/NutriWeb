@@ -1,6 +1,6 @@
 # Ignore the data folder
 data_ignore/
-
+data/
 # Ignore the embeddings folder
 # embeddings/
 

@@ -18,7 +18,7 @@ from modules.recommendations import recommend_by_ingredients, recommend_products
 @st.cache_data
 def load_data(name_weight=0.2):
     """Load products dataset and precomputed embeddings; return DataFrame and combined embeddings."""
-    df = pd.read_csv("data/cleaned_data.csv", dtype={"code": str})
+    df = pd.read_csv("/Users/krishvenigalla/Desktop/Object_detection/data/output.csv", dtype={"code": str})
     df.reset_index(drop=True, inplace=True)  # Align DataFrame index with embedding array indices.
     
     # Load precomputed embeddings (assume alignment by row index)
