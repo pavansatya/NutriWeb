@@ -52,7 +52,7 @@ def recommend_products(user_input, df, top_n, allergens_to_avoid=[]):
 
 def recommend_by_ingredients(user_input, df, top_n, allergens_to_avoid=None):
     
-    ingredient_embeddings = np.load('embeddings/ingredient_embeddings.npy')
+    ingredient_embeddings = np.load('/Users/krishvenigalla/Desktop/embeddings/ingredient_embeddings.npy')
     model = SentenceTransformer('all-MiniLM-L6-v2')
 
     dimension = ingredient_embeddings.shape[1]

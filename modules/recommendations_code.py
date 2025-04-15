@@ -57,7 +57,7 @@ def recommend_by_ingredients(ingredients_text, df, top_n=5, allergens_to_avoid=[
         return None
 
     # Step 1: Load embeddings & FAISS index
-    ingredient_embeddings = np.load('embeddings/ingredient_embeddings.npy')
+    ingredient_embeddings = np.load('/Users/krishvenigalla/Desktop/embeddings/ingredient_embeddings.npy')
     model = SentenceTransformer('all-MiniLM-L6-v2')
     
     dimension = ingredient_embeddings.shape[1]

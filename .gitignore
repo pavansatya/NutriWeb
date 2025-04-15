@@ -1,9 +1,9 @@
-# Ignore the data folder
-data/
-# Ignore the embeddings folder
-embeddings/
+# Ignore useful_data folder
 useful_data/
+
+# Ignore the my_embeddings folder
 my_embeddings/
+
 # Optionally, ignore virtual environment directories
 .venv/
 env/

@@ -49,8 +49,8 @@ def recommend_by_ingredients(ingredients_text, product_name, df, product_code, t
     MODEL = SentenceTransformer('all-MiniLM-L6-v2')
 
     # Load and normalize precomputed embeddings
-    ingredient_embeddings = np.load('embeddings/ingredient_embeddings.npy')
-    name_embeddings = np.load('embeddings/product_name_embeddings.npy')
+    ingredient_embeddings = np.load('/Users/krishvenigalla/Desktop/embeddings/ingredient_embeddings.npy')
+    name_embeddings = np.load('/Users/krishvenigalla/Desktop/embeddings/product_name_embeddings.npy')
 
     # Normalize the loaded embeddings
     def normalize_matrix(m):
