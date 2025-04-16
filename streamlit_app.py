@@ -33,7 +33,7 @@ from modules.recommendations import recommend_by_ingredients, recommend_products
 def load_data(name_weight=0.2):
     """Load zipped .npy and .csv files from Drive and return dataframe + combined embeddings."""
 
-    zip_dir = "my_zips"       
+    zip_dir = "/Users/krishvenigalla/Desktop/my_zips"       
     emb_dir = "my_embeddings" 
     data_dir = "useful_data"                  
     
@@ -43,7 +43,7 @@ def load_data(name_weight=0.2):
     zip_files = {
         "ingredient_embeddings.npy.zip": (emb_dir, "ingredient_embeddings.npy"),
         "product_name_embeddings.npy.zip": (emb_dir, "product_name_embeddings.npy"),
-        "cleaned_data.csv.zip": (data_dir,"output.csv")
+        "cleaned_data.csv.zip": (data_dir,"cleaned_data.csv")
     }
 
     # Extract if missing
@@ -58,7 +58,7 @@ def load_data(name_weight=0.2):
     # Load the files after extraction
     ingredient_emb = np.load(os.path.join(emb_dir, "ingredient_embeddings.npy"))
     product_name_emb = np.load(os.path.join(emb_dir, "product_name_embeddings.npy"))
-    df = pd.read_csv(os.path.join(data_dir, "output.csv"), dtype={"code": str})
+    df = pd.read_csv(os.path.join(data_dir, "cleaned_data.csv"), dtype={"code": str})
     df.reset_index(drop=True, inplace=True)
 
     # Combine embeddings
