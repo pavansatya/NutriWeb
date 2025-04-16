@@ -7,6 +7,8 @@ import re
 import os
 import gdown
 
+port = int(os.environ.get("PORT", 8501))
+
 # Import our risk analysis functions.
 from nutriweb.assess_risk import classify_product, assess_product_risks
 # Import product lookup function (barcode search using the 'code' column).
