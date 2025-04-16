@@ -10,7 +10,8 @@ import gdown
 # Import our risk analysis functions.
 from nutriweb.assess_risk import classify_product, assess_product_risks
 # Import product lookup function (barcode search using the 'code' column).
-from nutriweb.data_loader import get_product_by_code, get_category_slice
+#from nutriweb.data_loader import get_product_by_code, get_category_slice
+from nutriweb.data_loader import load_cleaned_data, get_product_by_code, get_category_slice
 # Import personalization functions.
 from nutriweb.personalization import get_user_profile, personalize_recommendations
 # Import recommendation functions (FAISS-based ingredient similarity) from modules.

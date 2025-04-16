@@ -1,7 +1,19 @@
 import pandas as pd
+import os
 
 # Load the product dataset (using 'data/cleaned_data.csv') ensuring that 'code' is a string.
-PRODUCT_DF = pd.read_csv('useful_data/cleaned_data.csv', dtype={'code': str})
+#PRODUCT_DF = pd.read_csv('useful_data/cleaned_data.csv', dtype={'code': str})
+def load_cleaned_data():
+    csv_path = os.path.join('useful_data', 'cleaned_data.csv')
+    
+    if not os.path.exists(csv_path):
+        raise FileNotFoundError(f"{csv_path} not found. Ensure it's extracted before calling this function.")
+    
+    df = pd.read_csv(csv_path, dtype={'code': str})
+    df.reset_index(drop=True, inplace=True)
+    return df
+
+PRODUCT_DF = load_cleaned_data()
 
 def get_product_by_code(barcode: str):
     """
