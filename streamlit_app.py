@@ -33,7 +33,7 @@ from modules.recommendations import recommend_by_ingredients, recommend_products
 def load_data(name_weight=0.2):
     """Load zipped .npy and .csv files from Drive and return dataframe + combined embeddings."""
 
-    zip_dir = "/Users/krishvenigalla/Desktop/my_zips"       
+    zip_dir = "my_zips"       
     emb_dir = "my_embeddings" 
     data_dir = "useful_data"                  
     
