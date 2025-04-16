@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import zipfile
 import faiss
 import re
 import os
@@ -18,36 +19,73 @@ from modules.recommendations import recommend_by_ingredients, recommend_products
 # ------------------------------------------------------------------
 # DATA & FAISS SETUP
 
-def download_from_gdrive(file_id, dest_path):
-    if os.path.exists(dest_path):
-        return
+# def download_from_gdrive(file_id, dest_path):
+#     if os.path.exists(dest_path):
+#         return
 
-    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-    url = f"https://drive.google.com/uc?id={file_id}"
-    print(f"Downloading {dest_path} using gdown...")
-    gdown.download(url, dest_path, quiet=False)
+#     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+#     url = f"https://drive.google.com/uc?id={file_id}"
+#     print(f"Downloading {dest_path} using gdown...")
+#     gdown.download(url, dest_path, quiet=False)
+    
     
 @st.cache_data
 def load_data(name_weight=0.2):
-    """Load products dataset and precomputed embeddings; return DataFrame and combined embeddings."""
+    """Load zipped .npy and .csv files from Drive and return dataframe + combined embeddings."""
+
+    zip_dir = "my_zips"       
+    emb_dir = "my_embeddings" 
+    data_dir = "useful_data"                  
     
-    # Ensure local paths exist
-    os.makedirs("my_embeddings", exist_ok=True)
-    os.makedirs("useful_data", exist_ok=True)
+    os.makedirs(emb_dir, exist_ok=True)
+    os.makedirs(data_dir, exist_ok=True)
 
-    # Download files from Google Drive if missing
-    download_from_gdrive("1KzrZGV2baWvI2-4NoqBgd2UKyyqG73tz", "my_embeddings/ingredient_embeddings.npy")
-    download_from_gdrive("1voqEBzyslHWgNbjCKSG6F8NahcoSnR85", "my_embeddings/product_name_embeddings.npy")
-    download_from_gdrive("1iUMFlPV_EkEsmJEUB7KjTFtcgE4P0hgv", "useful_data/output.csv")  
+    zip_files = {
+        "ingredient_embeddings.npy.zip": (emb_dir, "ingredient_embeddings.npy"),
+        "product_name_embeddings.npy.zip": (emb_dir, "product_name_embeddings.npy"),
+        "cleaned_data.csv.zip": (data_dir,"output.csv")
+    }
 
-    df = pd.read_csv("useful_data/output.csv", dtype={"code": str})
+    # Extract if missing
+    for zip_name, (target_dir, expected_file) in zip_files.items():
+        zip_path = os.path.join(zip_dir, zip_name)
+        extract_path = os.path.join(target_dir, expected_file)
+
+        if not os.path.exists(extract_path):
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(target_dir)
+
+    # Load the files after extraction
+    ingredient_emb = np.load(os.path.join(emb_dir, "ingredient_embeddings.npy")).astype('float32')
+    product_name_emb = np.load(os.path.join(emb_dir, "product_name_embeddings.npy")).astype('float32')
+    df = pd.read_csv(os.path.join(data_dir, "output.csv"), dtype={"code": str})
     df.reset_index(drop=True, inplace=True)
 
-    ingredient_emb = np.load("my_embeddings/ingredient_embeddings.npy").astype('float32')
-    product_name_emb = np.load("my_embeddings/product_name_embeddings.npy").astype('float32')
-
+    # Combine embeddings
     combined_emb = (1 - name_weight) * ingredient_emb + name_weight * product_name_emb
     return df, combined_emb
+    
+# @st.cache_data
+# def load_data(name_weight=0.2):
+#     """Load products dataset and precomputed embeddings; return DataFrame and combined embeddings."""
+    
+#     # Ensure local paths exist
+#     os.makedirs("my_embeddings", exist_ok=True)
+#     os.makedirs("useful_data", exist_ok=True)
+
+#     # Download files from Google Drive if missing
+#     download_from_gdrive("1KzrZGV2baWvI2-4NoqBgd2UKyyqG73tz", "my_embeddings/ingredient_embeddings.npy")
+#     download_from_gdrive("1voqEBzyslHWgNbjCKSG6F8NahcoSnR85", "my_embeddings/product_name_embeddings.npy")
+#     download_from_gdrive("1iUMFlPV_EkEsmJEUB7KjTFtcgE4P0hgv", "useful_data/output.csv")  
+
+#     df = pd.read_csv("useful_data/output.csv", dtype={"code": str})
+#     df.reset_index(drop=True, inplace=True)
+
+#     ingredient_emb = np.load("my_embeddings/ingredient_embeddings.npy").astype('float32')
+#     product_name_emb = np.load("my_embeddings/product_name_embeddings.npy").astype('float32')
+
+#     combined_emb = (1 - name_weight) * ingredient_emb + name_weight * product_name_emb
+#     return df, combined_emb
 
 df, combined_embeddings = load_data(name_weight=0.2)
 
