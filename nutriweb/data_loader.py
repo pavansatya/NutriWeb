@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Load the product dataset (using 'data/cleaned_data.csv') ensuring that 'code' is a string.
-PRODUCT_DF = pd.read_csv('/Users/krishvenigalla/Desktop/data/cleaned_data.csv', dtype={'code': str})
+PRODUCT_DF = pd.read_csv('useful_data/output.csv', dtype={'code': str})
 
 def get_product_by_code(barcode: str):
     """
