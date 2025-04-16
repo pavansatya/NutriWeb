@@ -49,7 +49,8 @@ def create_radar_chart(categories, values, title):
         title=title,
         showlegend=True
     )
-    
+    return fig
+
 
 def get_category_colors(categories):
     color_palette = [
@@ -103,4 +104,4 @@ def create_radar_chart_with_dropdown(categories, values, title):
         ),
         title=title
     )
-    fig.show()
+    return fig

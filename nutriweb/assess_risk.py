@@ -41,6 +41,9 @@ def classify_product(ingredients_text: str, additives_text: str):
     ingredients = clean_ingredients(ingredients_text)
     additives = clean_additives(additives_text)
     
+    # ✅ Explicitly split the ingredient string into a list
+    ingredients = [i.strip() for i in ingredients.split(',') if i.strip()]
+    
     ing_assessment = assess_product_ingredients(ingredients)
     add_assessment = assess_product_ingredients(additives)
     

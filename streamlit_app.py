@@ -16,6 +16,9 @@ from nutriweb.data_loader import load_cleaned_data, get_product_by_code, get_cat
 from nutriweb.personalization import get_user_profile, personalize_recommendations
 # Import recommendation functions (FAISS-based ingredient similarity) from modules.
 from modules.recommendations import recommend_by_ingredients, recommend_products
+# Import radar_chart funtions from modules.
+from modules.radar_chart import preprocess_data, create_radar_chart_with_dropdown
+
 
 # ------------------------------------------------------------------
 # DATA & FAISS SETUP
@@ -153,6 +156,14 @@ if query:
             st.write(f"**Product found:** {selected_product['product_name']}")
 
 # ------------------------------------------------------------------
+# FUNCTION FOR VISUAL ENHANCEMENTS
+def format_risk_level(risk):
+    if risk == "Avoid":
+        return "🔥 Avoid"
+    elif risk == "Caution":
+        return "⚠️ Caution"
+    return "✅ Safe"
+# ------------------------------------------------------------------
 # IF PRODUCT IS SELECTED, DISPLAY ANALYSIS & RECOMMENDATIONS
 if selected_product is not None:
     # Display product header (name and brand, if available)
@@ -191,12 +202,14 @@ if selected_product is not None:
         st.error(risk_details.get("warning"))
     st.subheader("Ingredient Risk Analysis")
     if ing_risks:
-        st.table(pd.DataFrame(list(ing_risks.items()), columns=["Ingredient", "Risk"]))
+        formatted_ing_risks = pd.DataFrame([(k, format_risk_level(v)) for k, v in ing_risks.items()], columns=["Ingredient", "Risk"])
+        st.dataframe(formatted_ing_risks, use_container_width=True)
     else:
         st.write("No ingredient-level risks identified.")
     st.subheader("Additive Risk Analysis")
     if add_risks:
-        st.table(pd.DataFrame(list(add_risks.items()), columns=["Additive", "Risk"]))
+        formatted_add_risks = pd.DataFrame([(k, format_risk_level(v)) for k, v in add_risks.items()], columns=["Additive", "Risk"])
+        st.dataframe(formatted_add_risks, use_container_width=True)
     else:
         st.write("No additive-level risks identified.")
     
@@ -274,5 +287,23 @@ if selected_product is not None:
         else:
             st.write("Error: Could not determine product index for recommendations.")
 
+# --- RADAR CHART: Nutritional Overview by Category ---
+st.subheader("Nutritional Overview of Top Food Categories")
+
+# You can limit the dataset to top categories for performance
+category_col = 'category_level_1'
+nutrient_cols = ['proteins_100g', 'carbohydrates_100g', 'fiber_100g', 'fat_100g', 'salt_100g']
+
+try:
+    top_category_nutrition = preprocess_data(df, category_col, nutrient_cols, top_n=10)
+    categories = top_category_nutrition[category_col]
+    values = top_category_nutrition[nutrient_cols]
+    
+    fig = create_radar_chart_with_dropdown(categories, values, title='Top 10 Primary Categories by Nutritional Facts')
+    st.plotly_chart(fig, use_container_width=True)
+
+except Exception as e:
+    st.error(f"⚠️ Error displaying radar chart: {e}")
+    
 st.write("----")
 st.write("Developed with NutriWeb – Personalized Food Recommendations")
