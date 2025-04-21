@@ -49,6 +49,7 @@ def recommend_by_ingredients(ingredients_text, product_name, df, product_code, t
     MODEL = SentenceTransformer('all-MiniLM-L6-v2')
 
     # Load and normalize precomputed embeddings
+    #Change the path to your local directory where the embeddings are stored
     ingredient_embeddings = np.load('/Users/krishvenigalla/Desktop/embeddings/ingredient_embeddings.npy')
     name_embeddings = np.load('/Users/krishvenigalla/Desktop/embeddings/product_name_embeddings.npy')
 
