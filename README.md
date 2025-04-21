@@ -347,12 +347,17 @@ Link to the paper: https://ieeexplore.ieee.org/abstract/document/8089390
 <!-- OUTPUT -->
 ## Output 
 
-<IMAGE src="images/nutrition_grades_distribution.png" width="600" />
+<IMAGE src="images/nutrition_grades_distribution.png" width="1200" />
 
 Click the link below to view the interactive Plotly visualization:
 🔗 [View Interactive Visualization](https://pavansatya.github.io/NutriWeb/nutrition_grades_distribution.html)
 
-<IMAGE src="images/bokeh_plot.png" width="600" />
+<IMAGE src="images/NGD_cross_top15_cats.png" width="1200" />
+
+<IMAGE src="images/category_hierarchy.png" width="1200" />
+
+Click this link below to view the treemap:
+🔗 [Treemap](https://pavansatya.github.io/NutriWeb/category_hierarchy_treemap.html)
 
 <!-- LICENSE -->
 ## License
