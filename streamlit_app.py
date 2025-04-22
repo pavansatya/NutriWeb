@@ -65,27 +65,7 @@ def load_data(name_weight=0.2):
     combined_emb = (1 - name_weight) * ingredient_emb + name_weight * product_name_emb
     return df, combined_emb
 
-#df, combined_embeddings = load_data(name_weight=0.2)
-st.title("NutriWeb")
-
-# Session state
-if "data_loaded" not in st.session_state:
-    st.session_state.data_loaded = False
-
-# Load button
-if not st.session_state.data_loaded:
-    if st.button("Load data"):
-        with st.spinner("Loading..."):
-            from nutriweb.data_loader import load_data
-            df, combined_embeddings = load_data()
-            st.session_state.df = df
-            st.session_state.combined_embeddings = combined_embeddings
-            st.session_state.data_loaded = True
-            st.success("Data loaded!")
-else:
-    df = st.session_state.df
-    combined_embeddings = st.session_state.combined_embeddings
-    st.write("🎉 Ready to go!")
+df, combined_embeddings = load_data(name_weight=0.2)
 
 @st.cache_resource
 def create_faiss_index(embeddings: np.ndarray):
