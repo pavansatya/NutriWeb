@@ -22,44 +22,6 @@ from modules.radar_chart import preprocess_data, create_radar_chart_with_dropdow
 
 # ------------------------------------------------------------------
 # DATA & FAISS SETUP
-        
-# @st.cache_data
-# def load_data(name_weight=0.2):
-#     """Load zipped .npy and .csv files from Drive and return dataframe + combined embeddings."""
-
-#     zip_dir = "/Users/krishvenigalla/Desktop/my_zips"       
-#     emb_dir = "my_embeddings" 
-#     data_dir = "useful_data"                  
-    
-#     os.makedirs(emb_dir, exist_ok=True)
-#     os.makedirs(data_dir, exist_ok=True)
-
-#     zip_files = {
-#         "ingredient_embeddings.npy.zip": (emb_dir, "ingredient_embeddings.npy"),
-#         "product_name_embeddings.npy.zip": (emb_dir, "product_name_embeddings.npy"),
-#         "cleaned_data.csv.zip": (data_dir,"cleaned_data.csv")
-#     }
-
-#     # Extract if missing
-#     for zip_name, (target_dir, expected_file) in zip_files.items():
-#         zip_path = os.path.join(zip_dir, zip_name)
-#         extract_path = os.path.join(target_dir, expected_file)
-
-#         if not os.path.exists(extract_path):
-#             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-#                 zip_ref.extractall(target_dir)
-
-#     # Load the files after extraction
-#     ingredient_emb = np.load(os.path.join(emb_dir, "ingredient_embeddings.npy"))
-#     product_name_emb = np.load(os.path.join(emb_dir, "product_name_embeddings.npy"))
-#     df = pd.read_csv(os.path.join(data_dir, "cleaned_data.csv"), dtype={"code": str})
-#     df.reset_index(drop=True, inplace=True)
-
-#     # Combine embeddings
-#     combined_emb = (1 - name_weight) * ingredient_emb + name_weight * product_name_emb
-#     return df, combined_emb
-
-# df, combined_embeddings = load_data(name_weight=0.2)
 
 @st.cache_data(show_spinner="Loading data and embeddings...")
 def load_data(name_weight=0.2):
@@ -103,7 +65,27 @@ def load_data(name_weight=0.2):
     combined_emb = (1 - name_weight) * ingredient_emb + name_weight * product_name_emb
     return df, combined_emb
 
-df, combined_embeddings = load_data(name_weight=0.2)
+#df, combined_embeddings = load_data(name_weight=0.2)
+st.title("NutriWeb")
+
+# Session state
+if "data_loaded" not in st.session_state:
+    st.session_state.data_loaded = False
+
+# Load button
+if not st.session_state.data_loaded:
+    if st.button("Load data"):
+        with st.spinner("Loading..."):
+            from nutriweb.data_loader import load_data
+            df, combined_embeddings = load_data()
+            st.session_state.df = df
+            st.session_state.combined_embeddings = combined_embeddings
+            st.session_state.data_loaded = True
+            st.success("Data loaded!")
+else:
+    df = st.session_state.df
+    combined_embeddings = st.session_state.combined_embeddings
+    st.write("🎉 Ready to go!")
 
 @st.cache_resource
 def create_faiss_index(embeddings: np.ndarray):
