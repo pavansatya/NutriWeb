@@ -25,47 +25,9 @@ from modules.radar_chart import preprocess_data, create_radar_chart_with_dropdow
 # DATA & FAISS SETUP
 
 @st.cache_data(show_spinner="Loading data and embeddings...")
-# def load_data(name_weight=0.2):
-#     """Download, unzip, and load .npy and .csv files from Google Drive."""
-
-#     emb_dir = "my_embeddings"
-#     data_dir = "useful_data"
-#     os.makedirs(emb_dir, exist_ok=True)
-#     os.makedirs(data_dir, exist_ok=True)
-
-#     zip_files = {
-#         "ingredient_embeddings.npy.zip": {
-#             "drive_id": "1ox_YsYg0H6tQAIKaY-O-WJ6jF9zhBq_e", "target_dir": emb_dir, "expected_file": "ingredient_embeddings.npy"
-#         },
-#         "product_name_embeddings.npy.zip": {
-#             "drive_id": "1tXTZA5WfjNNsqBayXjqtENoO4Jd7UI88", "target_dir": emb_dir, "expected_file": "product_name_embeddings.npy"
-#         },
-#         "cleaned_data.csv.zip": {
-#             "drive_id": "1cjfePkFN7G9nH_u0tHEOyz6891tIWn2P", "target_dir": data_dir, "expected_file": "cleaned_data.csv"
-#         },
-#     }
-
-#     for zip_name, meta in zip_files.items():
-#         zip_path = os.path.join(meta["target_dir"], zip_name)
-#         extract_path = os.path.join(meta["target_dir"], meta["expected_file"])
-
-#         # Download from Google Drive if not already present
-#         if not os.path.exists(extract_path):
-#             url = f"https://drive.google.com/uc?id={meta['drive_id']}"
-#             gdown.download(url, zip_path, quiet=False)
-#             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-#                 zip_ref.extractall(meta["target_dir"])
-
-#     # Load after extraction
-#     ingredient_emb = np.load(os.path.join(emb_dir, "ingredient_embeddings.npy"))
-#     product_name_emb = np.load(os.path.join(emb_dir, "product_name_embeddings.npy"))
-#     df = pd.read_csv(os.path.join(data_dir, "cleaned_data.csv"), dtype={"code": str})
-#     df.reset_index(drop=True, inplace=True)
-
-#     # Combine embeddings
-#     combined_emb = (1 - name_weight) * ingredient_emb + name_weight * product_name_emb
-#     return df, combined_emb
 def load_data(name_weight=0.2):
+    """Download, unzip, and load .npy and .csv files from Google Drive."""
+
     emb_dir = "my_embeddings"
     data_dir = "useful_data"
     os.makedirs(emb_dir, exist_ok=True)
@@ -73,34 +35,34 @@ def load_data(name_weight=0.2):
 
     zip_files = {
         "ingredient_embeddings.npy.zip": {
-            "repo_id": "Krish264/nutriweb-data", "target_dir": emb_dir, "expected_file": "ingredient_embeddings.npy"
+            "drive_id": "1ox_YsYg0H6tQAIKaY-O-WJ6jF9zhBq_e", "target_dir": emb_dir, "expected_file": "ingredient_embeddings.npy"
         },
         "product_name_embeddings.npy.zip": {
-            "repo_id": "Krish264/nutriweb-data", "target_dir": emb_dir, "expected_file": "product_name_embeddings.npy"
+            "drive_id": "1tXTZA5WfjNNsqBayXjqtENoO4Jd7UI88", "target_dir": emb_dir, "expected_file": "product_name_embeddings.npy"
         },
         "cleaned_data.csv.zip": {
-            "repo_id": "Krish264/nutriweb-data", "target_dir": data_dir, "expected_file": "cleaned_data.csv"
+            "drive_id": "1cjfePkFN7G9nH_u0tHEOyz6891tIWn2P", "target_dir": data_dir, "expected_file": "cleaned_data.csv"
         },
     }
 
     for zip_name, meta in zip_files.items():
+        zip_path = os.path.join(meta["target_dir"], zip_name)
         extract_path = os.path.join(meta["target_dir"], meta["expected_file"])
 
+        # Download from Google Drive if not already present
         if not os.path.exists(extract_path):
-            zip_path = hf_hub_download(
-                repo_id=meta["repo_id"],
-                filename=zip_name,
-                cache_dir=meta["target_dir"]
-            )
+            url = f"https://drive.google.com/uc?id={meta['drive_id']}"
+            gdown.download(url, zip_path, quiet=False)
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(meta["target_dir"])
 
-    # Load files
+    # Load after extraction
     ingredient_emb = np.load(os.path.join(emb_dir, "ingredient_embeddings.npy"))
     product_name_emb = np.load(os.path.join(emb_dir, "product_name_embeddings.npy"))
     df = pd.read_csv(os.path.join(data_dir, "cleaned_data.csv"), dtype={"code": str})
     df.reset_index(drop=True, inplace=True)
 
+    # Combine embeddings
     combined_emb = (1 - name_weight) * ingredient_emb + name_weight * product_name_emb
     return df, combined_emb
 
