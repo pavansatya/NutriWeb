@@ -11,3 +11,4 @@ faiss-cpu == 1.10.0
 streamlit==1.44.1
 gdown == 5.2.0
 poetry==1.8.5
+huggingface_hub==0.30.2
