@@ -363,5 +363,3 @@ Click this link below to view the treemap:
 ## License
 
 [Open Food Facts](https://world.openfoodfacts.org/data)
-
-

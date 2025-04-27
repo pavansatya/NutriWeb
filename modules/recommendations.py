@@ -54,26 +54,26 @@ def recommend_by_ingredients(ingredients_text, product_name, df, product_code, t
     name_embeddings = np.load('/Users/krishvenigalla/Desktop/embeddings/product_name_embeddings.npy')
 
     # Normalize the loaded embeddings
-    def normalize_matrix(m):
-        return m / np.linalg.norm(m, axis=1, keepdims=True)
+    # def normalize_matrix(m):
+    #     return m / np.linalg.norm(m, axis=1, keepdims=True)
 
-    ingredient_embeddings = normalize_matrix(ingredient_embeddings)
-    name_embeddings = normalize_matrix(name_embeddings)
+    # ingredient_embeddings = normalize_matrix(ingredient_embeddings)
+    # name_embeddings = normalize_matrix(name_embeddings)
 
     # Combine normalized embeddings, then normalize again
     combined_embeddings = (1 - name_weight) * ingredient_embeddings + name_weight * name_embeddings
-    combined_embeddings = normalize_matrix(combined_embeddings)
+    #combined_embeddings = normalize_matrix(combined_embeddings)
 
     # Encode and normalize queries
     ingredient_query = MODEL.encode([ingredients_text], normalize_embeddings=True)[0]
     name_query = MODEL.encode([product_name], normalize_embeddings=True)[0]
 
     combined_query = (1 - name_weight) * ingredient_query + name_weight * name_query
-    combined_query = combined_query / np.linalg.norm(combined_query)
+    #combined_query = combined_query / np.linalg.norm(combined_query)
 
     # FAISS search with cosine similarity
     dimension = combined_query.shape[0]
-    index = faiss.IndexFlatIP(dimension)
+    index = faiss.IndexFlatL2(dimension)
     index.add(combined_embeddings)
 
     distances, indices = index.search(np.array([combined_query]), top_n * 20)
