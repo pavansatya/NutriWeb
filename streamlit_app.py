@@ -107,9 +107,20 @@ if "user_profile" not in st.session_state:
 # ------------------------------------------------------------------
 # MAIN: PRODUCT SEARCH
 st.title("NutriWeb: Personalized Food Products Recommendation System")
-search_mode = st.radio("Search for a product by:", ["Product Name", "Barcode"])
-query = st.text_input("Enter product {}:".format("name" if search_mode=="Product Name" else "barcode"))
+#search_mode = st.radio("Search for a product by:", ["Product Name", "Barcode"])
+search_mode = st.radio(
+    "Search for a product by:",
+    ["Product Name", "------- or -------", "Barcode"],
+    index=0
+)
 
+# Prevent user from selecting the "or" option
+if search_mode == "------- or -------":
+    st.warning("Please select either 'Product Name' or 'Barcode'.")
+    st.stop()
+
+query = st.text_input("Enter product {}:".format("name" if search_mode=="Product Name" else "barcode"))
+ 
 selected_product = None
 if query:
     if search_mode == "Product Name":
@@ -171,22 +182,22 @@ if selected_product is not None:
         classification = "Avoid"
         risk_details["warning"] = "This product contains allergens you are sensitive to."
     
-    st.subheader("General Risk Assessment")
-    st.write(f"**Classification:** {classification}")
-    if risk_details.get("warning"):
-        st.error(risk_details.get("warning"))
-    st.subheader("Ingredient Risk Analysis")
-    if ing_risks:
-        formatted_ing_risks = pd.DataFrame([(k, format_risk_level(v)) for k, v in ing_risks.items()], columns=["Ingredient", "Risk"])
-        st.dataframe(formatted_ing_risks, use_container_width=True)
-    else:
-        st.write("No ingredient-level risks identified.")
-    st.subheader("Additive Risk Analysis")
-    if add_risks:
-        formatted_add_risks = pd.DataFrame([(k, format_risk_level(v)) for k, v in add_risks.items()], columns=["Additive", "Risk"])
-        st.dataframe(formatted_add_risks, use_container_width=True)
-    else:
-        st.write("No additive-level risks identified.")
+    # st.subheader("General Risk Assessment")
+    # st.write(f"**Classification:** {classification}")
+    # if risk_details.get("warning"):
+    #     st.error(risk_details.get("warning"))
+    # st.subheader("Ingredient Risk Analysis")
+    # if ing_risks:
+    #     formatted_ing_risks = pd.DataFrame([(k, format_risk_level(v)) for k, v in ing_risks.items()], columns=["Ingredient", "Risk"])
+    #     st.dataframe(formatted_ing_risks, use_container_width=True)
+    # else:
+    #     st.write("No ingredient-level risks identified.")
+    # st.subheader("Additive Risk Analysis")
+    # if add_risks:
+    #     formatted_add_risks = pd.DataFrame([(k, format_risk_level(v)) for k, v in add_risks.items()], columns=["Additive", "Risk"])
+    #     st.dataframe(formatted_add_risks, use_container_width=True)
+    # else:
+    #     st.write("No additive-level risks identified.")
     
     # --- PERSONALIZED INGREDIENT-BASED ALTERNATIVES ---
     st.subheader("Personalized Ingredient-Based Alternatives")
@@ -261,6 +272,23 @@ if selected_product is not None:
             st.table(candidates[["product_name", "brands"]].head(5))
         else:
             st.write("Error: Could not determine product index for recommendations.")
+            
+    st.subheader("General Risk Assessment")
+    st.write(f"**Classification:** {classification}")
+    if risk_details.get("warning"):
+        st.error(risk_details.get("warning"))
+    st.subheader("Ingredient Risk Analysis")
+    if ing_risks:
+        formatted_ing_risks = pd.DataFrame([(k, format_risk_level(v)) for k, v in ing_risks.items()], columns=["Ingredient", "Risk"])
+        st.dataframe(formatted_ing_risks, use_container_width=True)
+    else:
+        st.write("No ingredient-level risks identified.")
+    st.subheader("Additive Risk Analysis")
+    if add_risks:
+        formatted_add_risks = pd.DataFrame([(k, format_risk_level(v)) for k, v in add_risks.items()], columns=["Additive", "Risk"])
+        st.dataframe(formatted_add_risks, use_container_width=True)
+    else:
+        st.write("No additive-level risks identified.")        
 
 # --- RADAR CHART: Nutritional Overview by Category ---
 st.subheader("Nutritional Overview of Top Food Categories")
