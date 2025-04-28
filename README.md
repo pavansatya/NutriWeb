@@ -1,6 +1,7 @@
 # NutriWeb – Smart & Sustainable Food Choices
 
-![Alt Text](https://github.com/Thanvitha/NutriWeb_project/blob/main/images/nutrition.jpeg) 
+
+<IMAGE src="images/nutrition.jpeg" width="1200" />
 
 <!-- TABLE OF CONTENTS -->
 
@@ -24,7 +25,7 @@
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#license">License</a></li>
-    <li><a href="#output">Output</a></li>
+    <li><a href="#output & results">Output & Results</a></li>
   </ol>
 </details>
 
@@ -344,8 +345,8 @@ Link to the paper: https://ieeexplore.ieee.org/abstract/document/8089390
 ## Gitignore file
 - **.gitignore**: File to ignore the data files in the repository. As the dataset is huge we used the .gitignore file to ignore the data.
 
-<!-- OUTPUT -->
-## Output 
+<!-- OUTPUT & RESULTS -->
+## Output & Results
 
 <IMAGE src="images/nutrition_grades_distribution.png" width="1200" />
 
