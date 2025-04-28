@@ -106,20 +106,25 @@ if "user_profile" not in st.session_state:
 
 # ------------------------------------------------------------------
 # MAIN: PRODUCT SEARCH
-st.title("NutriWeb: Personalized Food Products Recommendation System")
-#search_mode = st.radio("Search for a product by:", ["Product Name", "Barcode"])
-search_mode = st.radio(
-    "Search for a product by:",
-    ["Product Name", "------- or -------", "Barcode"],
-    index=0
+# st.title("NutriWeb: Personalized Food Products Recommendation System")
+# search_mode = st.radio("Search for a product by:", ["Product Name", "Barcode"])
+# query = st.text_input("Enter product {}:".format("name" if search_mode=="Product Name" else "barcode"))
+# Create two columns
+#st.title("NutriWeb: Personalized Food Products Recommendation System")
+st.markdown(
+    "<h1 style='color: green;'>NutriWeb: Personalized Food Products Recommendation System</h41",
+    unsafe_allow_html=True
 )
 
-# Prevent user from selecting the "or" option
-if search_mode == "------- or -------":
-    st.warning("Please select either 'Product Name' or 'Barcode'.")
-    st.stop()
+st.markdown("##### Search for a product by name or barcode")
 
-query = st.text_input("Enter product {}:".format("name" if search_mode=="Product Name" else "barcode"))
+search_mode = st.radio(
+    label="",
+    options=["Product Name", "Barcode"],
+    horizontal=True
+)
+
+query = st.text_input(f"Enter { 'name' if search_mode == 'Product Name' else 'barcode' }:")
  
 selected_product = None
 if query:

@@ -359,6 +359,13 @@ Click the link below to view the interactive Plotly visualization:
 Click this link below to view the treemap:
 🔗 [Treemap](https://pavansatya.github.io/NutriWeb/category_hierarchy_treemap.html)
 
+This is the three dimensional Underlying Manifold Approximation & Projection (Umap) of the 384 dimensional vector embeddings of ingredients and respective product names
+
+<IMAGE src="images/3D_Umap.png" width="1200" />
+
+Click this link below to view the 2D Umap:
+🔗 [Umap](https://pavansatya.github.io/NutriWeb/2D_UMAP_top10_categories.html)
+
 <!-- LICENSE -->
 ## License
 
