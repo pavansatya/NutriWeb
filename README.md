@@ -161,84 +161,57 @@ Here's a literature review of existing personalized food recommendation systems,
 
 1. **Calorie & Nutrient Trackers (e.g. MyFitnessPal, Yuka)**:
 
-What they do: Enable users to log foods and see calories, macros, and some micronutrients.
+-> What they do: Enable users to log foods and see calories, macros, and some micronutrients.
 
 **Key limitations:**
 
-Manual logging burden: Users must enter every item and portion themselves, leading to “logging fatigue” and high drop-off rates.
+-> Manual logging burden: Users must enter every item and portion themselves, leading to “logging fatigue” and high drop-off rates.
 
-Data gaps: Many micronutrient values are missing or inconsistent across entries.
+-> Data gaps: Many micronutrient values are missing or inconsistent across entries.
 
-Subscription walls: Advanced features (barcode scan, detailed history) often require paid tiers.
+-> Subscription walls: Advanced features (barcode scan, detailed history) often require paid tiers.
 
 **NutriWeb contrast:**
 
-No tracking required: Instead of manual logs, users get recommendations by simply entering or scanning a product’s ingredients or barcode.
+-> No tracking required: Instead of manual logs, users get recommendations by simply entering or scanning a product’s ingredients or barcode.
 
-Free and open: Every feature is available without subscription.
+-> Free and open: Every feature is available without subscription.
 
 2. **Allergy & Preference Filters (e.g. Fig, Spokin)**:
-What they do: Let users list allergens or dietary preferences and then filter out unsafe items.
+
+-> What they do: Let users list allergens or dietary preferences and then filter out unsafe items.
 
 **Key limitations:**
 
-Rule-based only: Products are excluded purely by keyword or database flags—no deeper understanding of ingredient similarity.
+-> Rule-based only: Products are excluded purely by keyword or database flags—no deeper understanding of ingredient similarity.
 
-Rigid filters: If a product’s label is incomplete or uses unexpected terminology, it may slip through.
+-> Rigid filters: If a product’s label is incomplete or uses unexpected terminology, it may slip through.
 
-Limited suggestions: They show “safe” versus “unsafe,” but don’t recommend truly similar alternatives.
+-> Limited suggestions: They show “safe” versus “unsafe,” but don’t recommend truly similar alternatives.
 
 **NutriWeb contrast:**
 
-Semantic matching: By embedding each product’s full, preprocessed ingredient list into a dense vector space (384-D using all-MiniLM-L6-v2), NutriWeb can find and recommend the closest peanut-free or gluten-free products—even when they use different wording.
+-> Semantic matching: By embedding each product’s full, preprocessed ingredient list into a dense vector space (384-D using all-MiniLM-L6-v2), NutriWeb can find and recommend the closest peanut-free or gluten-free products—even when they use different wording.
 
-Ingredient-level intelligence: No more brittle keyword matching—NutriWeb’s FAISS index retrieves nearest-neighbor products based on true semantic similarity, so substitutes feel natural.
+-> Ingredient-level intelligence: No more brittle keyword matching—NutriWeb’s FAISS index retrieves nearest-neighbor products based on true semantic similarity, so substitutes feel natural.
 
 3. **AI-Powered Nutrition Assistants (e.g. Spoon Guru)**:
-What they do: Use collaborative filtering or recipe-based content recommendations to suggest meals or products.
+
+-> What they do: Use collaborative filtering or recipe-based content recommendations to suggest meals or products.
 
 **Key limitations:**
 
-Black-box models: Often opaque, with little insight into why a suggestion was made.
+-> Black-box models: Often opaque, with little insight into why a suggestion was made.
 
-Surface features: Many rely on co-purchase or user-rating data rather than understanding the chemistry of ingredients.
+-> Surface features: Many rely on co-purchase or user-rating data rather than understanding the chemistry of ingredients.
 
-Narrow scope: Usually focused on recipe suggestions, not universal product recommendation across ingredient lists.
+-> Narrow scope: Usually focused on recipe suggestions, not universal product recommendation across ingredient lists.
 
 **NutriWeb contrast:**
 
-Transparent embedding pipeline: You see exactly how input ingredients are tokenized, lemmatized, and vectorized (see diagram below).
+-> Transparent embedding pipeline: You see exactly how input ingredients are tokenized, lemmatized, and vectorized (see diagram below).
 
-Ingredient embeddings > co-occurrence: Instead of “users who bought X also bought Y,” NutriWeb learns the semantics of each ingredient phrase, so it generalizes to new products and phrasing.
-
-<!-- System Design & Workflow -->
-## NutriWeb System Design and Workflow
-
-NutriWeb is designed to overcome the above gaps by being free and fully integrative. It requires no subscription fees, removing the cost barrier noted in other apps​. It simultaneously checks for allergens, analyzes nutrients, and computes sustainability metrics for foods. NutriWeb’s novel engine relies on deep semantic representations of ingredients. As shown below, raw ingredient lists are cleaned and embedded into a dense vector space, and a FAISS index enables fast nearest-neighbor queries for similar foods. 
-
-<IMAGE src="images/a.jpg" width="1200" />, <IMAGE src="images/b.jpg" width="1200" />
-
-NutriWeb transforms each product’s ingredient list into a 384-dimensional embedding using a pretrained sentence transformer (all-MiniLM-L6-v2). First, the app applies NLP preprocessing (tokenization, lemmatization, stop-word removal) to normalize the ingredient text. The cleaned ingredients string is fed into the sentence transformer, producing a semantic embedding vector. All product embeddings are indexed using Facebook’s FAISS library, which is optimized for rapid nearest-neighbor search on large high-dimensional datasets​. This dense-vector approach allows NutriWeb to retrieve foods with similar ingredient profiles, enabling personalized recommendations and substitutions that go beyond simple keyword matching. 
-
-<IMAGE src="images/c.jpg" width="1200" />
-
-Raw ingredient labels (e.g. “Organic pasta (organic wheat flour), cheese sauce mix (dried whey, cheddar cheese (cultured milk, salt, enzymes), dried buttermilk, salt, sea salt)”) are preprocessed stepwise. As illustrated above, NutriWeb removes parenthetical details, converts text to lowercase, and strips punctuation to yield a uniform ingredient phrase. This text cleaning ensures consistency (e.g. “organic pasta cheese sauce mix dried buttermilk salt sea salt”) before embedding. By standardizing ingredient strings in this way, NutriWeb captures true semantic similarity (e.g. recognizing that “soy milk” and “tofu” are more alike than “soy sauce”) in its recommendations. NutriWeb’s key strengths stem from this architecture and its comprehensive data integration. Unlike other apps, it is entirely free and open to users (no paywalls)​. It combines multiple metrics: nutrient content (like trackers), allergen/diet filters (like preference apps), and environmental impact (like sustainability apps) in one platform. Crucially, its use of dense vector similarity allows ingredient-level personalization. In the literature, very few systems exploit such semantic embedding for food​. By contrast, NutriWeb leverages these modern NLP techniques so that even subtle similarities between recipes can inform suggestions. For example, a user allergic to peanuts will not only have peanut-containing items filtered out, but NutriWeb can also suggest novel peanut-free products with a similar taste profile based on ingredient embedding.
-
-
-### Why Users Will Choose NutriWeb:
-
--> Effortless recommendations – no logging, just enter or scan ingredients once.
-
--> Truly free – all features unlocked, no paywalls or subscriptions.
-
--> Rich allergen safety plus smart swaps – if you’re allergic to peanuts, NutriWeb not only filters out peanut-containing items but also suggests the “next best” alternatives using deep semantic similarity.
-
--> Modern NLP + vector search – leverages state-of-the-art sentence-transformer embeddings and FAISS for real-time semantic matching across thousands of products.
-
--> Transparent and extensible – the pipeline is clear, and new metrics (nutrients, eco-scores) can be integrated later by tagging each product record.
-
-In sum, NutriWeb fills the gap between static filters and subscription-locked trackers by offering an open, allergy-aware, and ingredient-semantics engine that requires zero ongoing user effort beyond the initial input.
-
+-> Ingredient embeddings > co-occurrence: Instead of “users who bought X also bought Y,” NutriWeb learns the semantics of each ingredient phrase, so it generalizes to new products and phrasing.
 
 ### Key Papers to Explore
 
@@ -279,22 +252,53 @@ keywords: {Logic gates;Genetics;Data models;Recurrent neural networks;Genetic al
 
 Link to the paper: https://ieeexplore.ieee.org/abstract/document/8089390
 
+<!-- System Design & Workflow -->
+## NutriWeb System Design and Workflow
+
+NutriWeb is designed to overcome the above gaps by being free and fully integrative. It requires no subscription fees, removing the cost barrier noted in other apps​. It simultaneously checks for allergens, analyzes nutrients, and computes sustainability metrics for foods. NutriWeb’s novel engine relies on deep semantic representations of ingredients. As shown below, raw ingredient lists are cleaned and embedded into a dense vector space, and a FAISS index enables fast nearest-neighbor queries for similar foods. 
+
+<p float="left">
+  <IMAGE src="images/a.jpg" width="600" />
+  <IMAGE src="images/b.jpg" width="600" />
+</p>
+
+NutriWeb transforms each product’s ingredient list into a 384-dimensional embedding using a pretrained sentence transformer (all-MiniLM-L6-v2). First, the app applies NLP preprocessing (tokenization, lemmatization, stop-word removal) to normalize the ingredient text. The cleaned ingredients string is fed into the sentence transformer, producing a semantic embedding vector. All product embeddings are indexed using Facebook’s FAISS library, which is optimized for rapid nearest-neighbor search on large high-dimensional datasets​. This dense-vector approach allows NutriWeb to retrieve foods with similar ingredient profiles, enabling personalized recommendations and substitutions that go beyond simple keyword matching. 
+
+<IMAGE src="images/c.jpg" width="1200" />
+
+Raw ingredient labels (e.g. “Organic pasta (organic wheat flour), cheese sauce mix (dried whey, cheddar cheese (cultured milk, salt, enzymes), dried buttermilk, salt, sea salt)”) are preprocessed stepwise. As illustrated above, NutriWeb removes parenthetical details, converts text to lowercase, and strips punctuation to yield a uniform ingredient phrase. This text cleaning ensures consistency (e.g. “organic pasta cheese sauce mix dried buttermilk salt sea salt”) before embedding. By standardizing ingredient strings in this way, NutriWeb captures true semantic similarity (e.g. recognizing that “soy milk” and “tofu” are more alike than “soy sauce”) in its recommendations. NutriWeb’s key strengths stem from this architecture and its comprehensive data integration. Unlike other apps, it is entirely free and open to users (no paywalls)​. It combines multiple metrics: nutrient content (like trackers), allergen/diet filters (like preference apps), and environmental impact (like sustainability apps) in one platform. Crucially, its use of dense vector similarity allows ingredient-level personalization. In the literature, very few systems exploit such semantic embedding for food​. By contrast, NutriWeb leverages these modern NLP techniques so that even subtle similarities between recipes can inform suggestions. For example, a user allergic to peanuts will not only have peanut-containing items filtered out, but NutriWeb can also suggest novel peanut-free products with a similar taste profile based on ingredient embedding.
+
+
+### Why Users Will Choose NutriWeb:
+
+-> Effortless recommendations – no logging, just enter or scan ingredients once.
+
+-> Truly free – all features unlocked, no paywalls or subscriptions.
+
+-> Rich allergen safety plus smart swaps – if you’re allergic to peanuts, NutriWeb not only filters out peanut-containing items but also suggests the “next best” alternatives using deep semantic similarity.
+
+-> Modern NLP + vector search – leverages state-of-the-art sentence-transformer embeddings and FAISS for real-time semantic matching across thousands of products.
+
+-> Transparent and extensible – the pipeline is clear, and new metrics (nutrients, eco-scores) can be integrated later by tagging each product record.
+
+In sum, NutriWeb fills the gap between static filters and subscription-locked trackers by offering an open, allergy-aware, and ingredient-semantics engine that requires zero ongoing user effort beyond the initial input.
+
 <!-- USAGE -->
 ## Nutriweb
 
 ### Modules
-- **main.py**: Main module for the project. It contains the main functions for the project.
+
+## Nutriweb module:
 - **data_loader.py**: Module for data handling and processing.
-- **personalization.py**: Module for the personalized recommendations.
+- **personalization.py**: Module for the personalization.
 - **recommendations.py**: Module for product recommendations.
 - **risk_levels.py**: Module for assigning risk levels like low, moderate and high risks for ingredients and additives.
 - **assess_risk.py**: Module for assessing ingredients and additives risks and then classify the products as "AVOID" and "SAFE" based on the classification.
 
-## Templates
-
-### Html files
-- **index.html**: Main html file for the project.
-- **recommendations.html**: html file for the recommendations.
+## Modules module:
+- **recommendations.py**: Module for product recommendations.
+- **allergens.py**: Module for allergens filtering.
+- **radar_chart.py**: Module for data visualizations.
 
 ## pyproject.toml
 
@@ -306,6 +310,11 @@ Link to the paper: https://ieeexplore.ieee.org/abstract/document/8089390
 
 ## Gitignore file
 - **.gitignore**: File to ignore the data files in the repository. As the dataset is huge we used the .gitignore file to ignore the data.
+
+
+<!-- LIMITATIONS-->
+
+
 
 <!-- OUTPUT & RESULTS -->
 ## Output & Results
