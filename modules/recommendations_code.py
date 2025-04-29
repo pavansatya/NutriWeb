@@ -46,7 +46,7 @@ def recommend_products(bar_code, df, top_n=5, allergens_to_avoid=[]):
 
         # Step 4: Return top products
         filtered_products['allergens_en'] = filtered_products['allergens_en'].apply(clean_allergens)
-        return filtered_products[['product_name', 'additives_en', 'allergens_en']].head(top_n)
+        return filtered_products[['product_name', 'additives_en', 'allergens_en', 'nutrition_grade_fr']].head(top_n)
     
     # Step 5: Fallback to ingredient-based recommendation
     return recommend_by_ingredients(product_row.iloc[0]['ingredients_text'], df, top_n, allergens_to_avoid)
@@ -71,7 +71,7 @@ def recommend_by_ingredients(ingredients_text, df, top_n=5, allergens_to_avoid=[
     # Step 3: Retrieve products using indices
     similar_ingredients = [df.iloc[i]['ingredients_text'] for i in indices[0] if 0 <= i < len(df)]
     
-    recommendations = df[df['ingredients_text'].apply(lambda x: any(ingredient in x for ingredient in similar_ingredients))][['product_name', 'additives_en', 'allergens_en']].head(top_n)
+    recommendations = df[df['ingredients_text'].apply(lambda x: any(ingredient in x for ingredient in similar_ingredients))][['product_name', 'additives_en', 'allergens_en' 'nutrition_grade_fr']].head(top_n)
     
     # Step 4: Allergen filtering
     if allergens_to_avoid:
