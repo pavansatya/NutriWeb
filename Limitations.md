@@ -88,8 +88,8 @@ Incomplete Data Acquisition: Occasionally a field was meant to be filled by scra
 - We performed an audit of all columns and identified those that were completely null. Such columns were removed from the cleaned dataset. This cleanup reduced confusion and improved computational efficiency.
 
 ## Limitations We Could Not Fully Tackle
-### Persistent Missing Scores and Labels: We could not fully recover nutrition scores or labeling data for entries where the source never provided them. Some analyses must simply exclude these products.
+### Persistent Missing Scores and Labels: We could not fully recover nutrition scores or labeling data for entries where the source never provided them. 
 ### Ingredients and Allergens Gaps: Products lacking ingredient lists or allergen data remain incomplete. Without external data sources or manual entry, these gaps cannot be auto-filled.
-### Zero vs. Missing Ambiguity: Despite heuristic rules, we cannot be certain in all cases whether a zero is real or missing. This inherent ambiguity persists, and analysts must remain cautious.
+### Zero vs. Missing Ambiguity: Despite heuristic rules, we cannot be certain in all cases whether a zero is real or missing. 
 ### Carbon-Footprint Coverage: Given the scarcity of carbon footprint data, we cannot retrofit accurate environmental scores. Any ecological impact analysis is limited to categories or proxies, not product-specific values.
 ### Additives: As the risk levels of additives fickle, this might be a limitation. For example, according to latest scientific studies, some additives which were classified as higher risk are now classified as low risk.
