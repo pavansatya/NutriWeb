@@ -7,24 +7,154 @@ import re
 import os
 import gdown
 from huggingface_hub import hf_hub_download
+from datetime import datetime
+from pymongo import MongoClient
+from pymongo.errors import DuplicateKeyError
 
-# Import our risk analysis functions.
+# ────────────────────────────────────────────────────
+# 1) SESSION STATE INITIALIZATION
+# ────────────────────────────────────────────────────
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+if "page" not in st.session_state:
+    st.session_state.page = "auth"                # auth → search → recommendations → product_detail/profile
+if "selected_product_code" not in st.session_state:
+    st.session_state.selected_product_code = None
+
+
+
+# ——————————————————————————————————————————
+# 2) MongoDB Atlas setup for auth & history
+# ——————————————————————————————————————————
+@st.cache_resource
+def get_db():
+    uri = st.secrets["MONGODB_URI"]
+    client = MongoClient(uri)
+    name = st.secrets.get("MONGO_DB_NAME", "nutriweb_db")
+    return client[name]
+
+db = get_db()
+users_col   = db["users"]
+history_col = db["history"]
+
+def save_profile(uid, profile, pw):
+    try:
+        users_col.insert_one({ "_id": uid, "password": pw, **profile })
+        return True
+    except DuplicateKeyError:
+        return False
+
+def load_profile(uid):
+    return users_col.find_one({"_id": uid})
+
+def append_history(uid, entry):
+    history_col.insert_one({"user_id": uid, **entry})
+
+
+# ─────────────────────────────────
+# LOGOUT HELPER
+# ─────────────────────────────────
+def logout():
+    """
+    Clears user‐related session_state so the app falls back to the auth screen.
+    """
+    for key in [
+        "authenticated",
+        "user_id",
+        "profile",
+        "page",
+        "selected_product_code",
+        "recommended_products",
+    ]:
+        st.session_state.pop(key, None)
+# ——————————————————————————————————————————
+# 3) AUTH PAGE
+# ——————————————————————————————————————————
+if st.session_state.page == "auth":
+    st.title("🔒 Welcome to NutriWeb")
+    st.image("images/nutrition.jpeg", use_container_width=True)
+    st.markdown("**Welcome to NutriWeb: Please log in or register to continue.**")
+    
+    tab_login, tab_register = st.tabs(["Login", "Register"])
+
+    with tab_login:
+        login_id = st.text_input("User ID", key="login_id")
+        login_pw = st.text_input("Password", type="password", key="login_pw")
+        if st.button("Log In"):
+            user = load_profile(login_id)
+            if user and user["password"] == login_pw:
+                st.session_state.authenticated = True
+                st.session_state.user_id = login_id
+                st.session_state.profile = {
+                    "age": user["age"],
+                    "gender": user["gender"],
+                    "cholesterol": user["cholesterol"],
+                    "blood_pressure": user["blood_pressure"],
+                    "allergens": user.get("allergens", []),
+                    "dietary_restrictions": user.get("dietary_restrictions", [])
+                }
+                st.session_state.page = "search"
+                
+            else:
+                st.error("Invalid credentials.")
+
+    with tab_register:
+        reg_id = st.text_input("User ID", key="reg_id")
+        reg_pw = st.text_input("Password", type="password", key="reg_pw")
+        age = st.number_input("Age", 0, 120, 30, key="reg_age")
+        gender = st.selectbox("Gender", ["Male", "Female", "Other"], key="reg_gender")
+        chol = st.selectbox("Cholesterol", ["Normal", "High"], key="reg_chol")
+        bp = st.selectbox("Blood Pressure", ["Normal", "High"], key="reg_bp")
+        allergens = st.multiselect(
+            "Allergens",
+            ["Gluten", "Peanuts", "Soy", "Dairy", "Eggs", "Shellfish", "Fish", "Tree Nuts"],
+            key="reg_allergens"
+        )
+        dietary_restrictions = st.multiselect(
+            "Dietary Restrictions", ["Vegetarian", "Vegan"], key="reg_diet"
+        )
+        if st.button("Register"):
+            if not reg_id or not reg_pw:
+                st.error("ID & password required.")
+            else:
+                profile = {
+                    "age": age,
+                    "gender": gender,
+                    "cholesterol": chol,
+                    "blood_pressure": bp,
+                    "allergens": allergens,
+                    "dietary_restrictions": dietary_restrictions
+                }
+                if save_profile(reg_id, profile, reg_pw):
+                    st.success("Registered—now switch to Login.")
+                else:
+                    st.error("User ID exists.")
+
+    st.stop()  # don't run anything else on the auth page
+
+# ────────────────────────────────────────────────────
+# 4) REQUIRE AUTH FOR ALL OTHER PAGES
+# ────────────────────────────────────────────────────
+if not st.session_state.authenticated:
+    st.session_state.page = "auth"
+
+# ——————————————————————————————————————————
+# 5) Import risk & recommendation modules
+# ——————————————————————————————————————————
+
 from nutriweb.assess_risk import classify_product, assess_product_risks
-# Import product lookup function (barcode search using the 'code' column).
-#from nutriweb.data_loader import get_product_by_code, get_category_slice
 from nutriweb.data_loader import load_cleaned_data, get_product_by_code, get_category_slice
-# Import personalization functions.
 from nutriweb.personalization import get_user_profile, personalize_recommendations
-# Import recommendation functions (FAISS-based ingredient similarity) from modules.
-from modules.recommendations import recommend_by_ingredients, recommend_products
-# Import radar_chart funtions from modules.
+from modules.recommendations import filter_by_allergens, recommend_by_ingredients, recommend_products
 from modules.radar_chart import preprocess_data, create_radar_chart_with_dropdown
+from modules.allergens import find_allergens 
 
 
-# ------------------------------------------------------------------
-# DATA & FAISS SETUP
+# ────────────────────────────────
+# 6) Load Products & Embeddings
+# ────────────────────────────────
 
-@st.cache_data(show_spinner="Loading data and embeddings...")
+@st.cache_data(show_spinner="⏳ Getting things ready... Hang tight!")
 def load_data(name_weight=0.2):
     """Download, unzip, and load .npy and .csv files from Google Drive."""
 
@@ -77,116 +207,337 @@ def create_faiss_index(embeddings: np.ndarray):
     return index
 
 faiss_index = create_faiss_index(combined_embeddings)
+# ——————————————————————————————————————————
+# 7) DIETARY EXCLUSION LISTS & HELPERS
+# ——————————————————————————————————————————
+vegetarian_exclusions = [
+    "meat","chicken","beef","pork","fish","shellfish","eggs",
+    "shrimp","crab","lobster","gelatin","bacon","lard","turkey"
+]
+vegan_exclusions = vegetarian_exclusions + [
+    "milk","butter","cheese","cream","egg","eggs",
+    "honey","whey","casein","yogurt"
+]
 
-# ------------------------------------------------------------------
-# SIDEBAR: USER PROFILE INPUT
-st.sidebar.header("User Health Profile")
-age = st.sidebar.number_input("Age", min_value=0, max_value=120, value=30)
-gender = st.sidebar.selectbox("Gender", options=["Male", "Female", "Other"])
-height = st.sidebar.number_input("Height (cm)", min_value=0, max_value=300, value=170)
-weight = st.sidebar.number_input("Weight (kg)", min_value=0, max_value=500, value=70)
-dietary_restrictions = st.sidebar.multiselect("Dietary Restrictions", ["Vegetarian", "Vegan"])
-allergen_options = ["Gluten", "Peanuts", "Soy", "Dairy", "Eggs", "Shellfish", "Fish", "Tree Nuts"]
-allergens = st.sidebar.multiselect("Allergens (food allergies)", allergen_options)
-high_bp = st.sidebar.checkbox("High Blood Pressure")     # if checked, user has high BP
-high_chol = st.sidebar.checkbox("High Cholesterol")      # if checked, user has high cholesterol
-
-# Save user profile in session state.
-if "user_profile" not in st.session_state:
-    st.session_state.user_profile = get_user_profile(
-        age=age,
-        gender=gender,
-        height=height,
-        weight=weight,
-        cholesterol="High" if high_chol else "Normal",
-        blood_pressure="High" if high_bp else "Normal",
-        allergens=",".join(allergens),
-        diet_type=",".join(dietary_restrictions)
-    )
-
-# ------------------------------------------------------------------
-# MAIN: PRODUCT SEARCH
-# st.title("NutriWeb: Personalized Food Products Recommendation System")
-# search_mode = st.radio("Search for a product by:", ["Product Name", "Barcode"])
-# query = st.text_input("Enter product {}:".format("name" if search_mode=="Product Name" else "barcode"))
-# Create two columns
-#st.title("NutriWeb: Personalized Food Products Recommendation System")
-st.markdown(
-    "<h1 style='color: green;'>NutriWeb: Personalized Food Products Recommendation System</h41",
-    unsafe_allow_html=True
-)
-
-st.markdown("##### Search for a product by name or barcode")
-
-search_mode = st.radio(
-    label="",
-    options=["Product Name", "Barcode"],
-    horizontal=True
-)
-
-query = st.text_input(f"Enter { 'name' if search_mode == 'Product Name' else 'barcode' }:")
- 
-selected_product = None
-if query:
-    if search_mode == "Product Name":
-        matches = df[df['product_name'].str.contains(query, case=False, na=False)]
-        if matches.empty:
-            st.warning("No products found with that name. Please try a different query.")
-        elif len(matches) > 1:
-            product_choice = st.selectbox("Select a product", matches['product_name'].unique())
-            if product_choice:
-                selected_product = df[df['product_name'] == product_choice].iloc[0]
-        else:
-            selected_product = matches.iloc[0]
-    else:  # Barcode search
-        matches = df[df['code'].astype(str) == str(query).strip()]
-        if matches.empty:
-            st.warning("No product found with that barcode. Please try a different code.")
-        else:
-            selected_product = matches.iloc[0]
-            st.write(f"**Product found:** {selected_product['product_name']}")
-
-# ------------------------------------------------------------------
-# FUNCTION FOR VISUAL ENHANCEMENTS
-def format_risk_level(risk):
+def format_risk_level(risk: str) -> str:
     if risk == "Avoid":
         return "🔥 Avoid"
     elif risk == "Caution":
         return "⚠️ Caution"
     return "✅ Safe"
-# ------------------------------------------------------------------
-# IF PRODUCT IS SELECTED, DISPLAY ANALYSIS & RECOMMENDATIONS
-if selected_product is not None:
-    # Display product header (name and brand, if available)
-    product_name = selected_product.get("product_name", "Unknown Product")
-    product_brand = selected_product.get("brands") if "brands" in selected_product else None
-    if pd.notna(product_brand) and product_brand not in [None, "", np.nan]:
-        st.header(f"{product_brand} – {product_name}")
-    else:
-        st.header(product_name)
-    
-    # --- RISK ASSESSMENT (Single Block) ---
-    classification, ing_risks, add_risks = classify_product(
-        selected_product.get("ingredients_text", ""),
-        selected_product.get("additives_en", "")
+
+def candidate_is_safe(row):
+    cls, _, _ = classify_product(
+        row.get("ingredients_text",""), row.get("additives_en","")
     )
-    risk_details = assess_product_risks(
-        selected_product.get("ingredients_text", ""),
-        selected_product.get("additives_en", "")
+    return cls in ["Safe","Caution"]
+
+def filter_by_diet(df: pd.DataFrame, diets: list[str]) -> pd.DataFrame:
+    if not diets:
+        return df
+    def ok(row):
+        ingr = str(row.get("ingredients_text","")).lower()
+        if "vegan" in diets:
+            return not any(kw in ingr for kw in vegan_exclusions)
+        elif "vegetarian" in diets:
+            return not any(kw in ingr for kw in vegetarian_exclusions)
+        return True
+    return df[df.apply(ok, axis=1)]
+
+# ────────────────────────────────────────────────────
+# 8) SEARCH PAGE
+# ────────────────────────────────────────────────────
+if st.session_state.page == "search":
+    _, colp, col_logout = st.columns([7,3,3])
+    with colp:
+        if st.button("👤My Profile"):
+            st.session_state.page = "profile"
+    with col_logout:
+        st.button("🚪 Logout", on_click=logout)
+
+    #st.title("NutriWeb: Personalized Food Products Recommendations")
+    st.markdown("<h1 style='color: green;'>NutriWeb: Personalized Food Products Recommendation System</h41", unsafe_allow_html=True)
+
+    prof = st.session_state.profile
+    dietary_restrictions = prof.get("dietary_restrictions", [])  
+    allergens            = prof.get("allergens", [])
+    high_bp              = (prof.get("blood_pressure") == "High")
+    high_chol            = (prof.get("cholesterol")    == "High")
+
+    user_allergens = [a.lower() for a in allergens]
+    user_diets     = [d.lower() for d in dietary_restrictions]
+
+    # 1) SELECT
+    mode = st.radio("Find by:", ["Product Name","Barcode"])
+    q    = st.text_input(f"Enter { 'name' if mode=='Product Name' else 'barcode' }:")
+    selected = None
+    if q:
+        if mode=="Product Name":
+            hits = df[df["product_name"].str.contains(q,case=False,na=False)]
+            if not hits.empty:
+                if len(hits)>1:
+                    choice = st.selectbox("Select one", hits["product_name"].unique())
+                    if choice:
+                        selected = hits[hits["product_name"]==choice].iloc[0]
+                else:
+                    selected = hits.iloc[0]
+            else:
+                st.warning("No matches.")
+        else:
+            hits = df[df["code"]==q.strip()]
+            if not hits.empty:
+                selected = hits.iloc[0]
+                st.success(f"Found: {selected['product_name']}")
+            else:
+                st.warning("No barcode match.")
+
+    if selected is None:
+        st.stop()
+
+    # Risk assessment & history logging
+    cls, ing_risks, add_risks = classify_product(
+        selected.get("ingredients_text",""), selected.get("additives_en","")
     )
-    # PERSONALIZED ALLERGEN OVERRIDE:
-    # Convert the allergens stored in the user profile to a list.
-    user_allergens_data = st.session_state.user_profile.get("allergens", "")
-    if isinstance(user_allergens_data, str):
-        user_allergens_list = [a.strip().lower() for a in user_allergens_data.split(",") if a.strip()]
+    warnings = []
+
+    ingr_text = str(selected.get("ingredients_text","")).lower()
+    raw_allergen_tags = find_allergens(selected.get("ingredients_text",""))
+    detected = [tag.split(":",1)[1] for tag in raw_allergen_tags]
+    found = [a for a in detected if a in user_allergens]
+    if found:
+        cls = "Avoid"
+        warnings.append(f"Contains allergen(s): {', '.join(found)}")
+
+    diet_violation = False
+    if "vegan" in user_diets and any(kw in ingr_text for kw in vegan_exclusions):
+        diet_violation = True
+    elif "vegetarian" in user_diets and any(kw in ingr_text for kw in vegetarian_exclusions):
+        diet_violation = True
+    if diet_violation:
+        cls = "Avoid"
+        warnings.append(f"Not suitable for a {', '.join(dietary_restrictions).lower()} diet.")
+
+    if high_bp:
+        sodium_val = selected.get("sodium_100g")
+        if (sodium_val is not None and sodium_val > 5.0) or ("salt" in ingr_text):
+            cls = "Avoid"
+            warnings.append("High sodium — not recommended for high blood pressure.")
+
+    if high_chol:
+        sat_val = selected.get("saturated-fat_100g")
+        if (sat_val is not None and sat_val > 5.0) or any(
+            f in ingr_text for f in ["butter","cream","palm oil","lard"]
+        ):
+            cls = "Avoid"
+            warnings.append("High saturated fat — not recommended for high cholesterol.")
+
+    append_history(st.session_state.user_id, {
+        "timestamp":   datetime.utcnow().isoformat(),
+        "product_name": selected["product_name"],
+        "classification": cls
+    })
+    
+    st.subheader("General Risk Assessment")
+    st.write(f"**Classification:** {cls}")
+    if warnings:
+        st.error("⚠️ Not ideal for your profile.")
+        for w in warnings:
+            st.warning(w)
+            
+    
+    st.subheader("🔄 Personalized Ingredient-Based Recommendations")   
+    recs = recommend_by_ingredients(
+        selected.get("ingredients_text",""),
+        selected.get("product_name",""),
+        df,
+        product_code=selected["code"],
+        top_n=5,
+        allergens_to_avoid=user_allergens,
+        name_weight=0.1,
+        match_boost=0.2
+    )
+    if recs is None or recs.empty:
+        st.write("No alternatives found.")
     else:
-        user_allergens_list = [a.strip().lower() for a in user_allergens_data]
-    
-    cleaned_ingredients = str(selected_product.get("ingredients_text", "")).lower()
-    if user_allergens_list and any(allergen in cleaned_ingredients for allergen in user_allergens_list):
-        classification = "Avoid"
-        risk_details["warning"] = "This product contains allergens you are sensitive to."
-    
+        # 1) Merge back both ingredients_text AND additives_en
+        recs = recs.merge(
+            df[["product_name","ingredients_text","additives_en"]],
+            on="product_name",
+            how="left"
+        )
+
+        # 2) Filter out any that still contain allergens
+        recs = filter_by_allergens(recs, user_allergens)
+        # 3) Filter by dietary restrictions
+        recs = filter_by_diet(recs, user_diets)
+        # 4) Filter out any that re-classify to Avoid
+        recs = recs[recs.apply(candidate_is_safe, axis=1)]
+
+        # 5) Dedupe & take top 5
+        recs = recs.drop_duplicates("product_name").head(5)
+
+        # 6) Inject the brand column
+        brand_map = (
+            df[["product_name","brands"]]
+            .drop_duplicates(subset="product_name")
+            .set_index("product_name")["brands"]
+            .to_dict()
+        )
+        recs["Brands"] = recs["product_name"].map(brand_map)
+
+        # 7) Drop no-longer-needed columns
+        recs = recs.drop(columns=["ingredients_text","additives_en","score"], errors="ignore")
+
+        # 8) Display only Product, Brand, Allergens
+        display = recs.rename(columns={
+            "product_name":"Product",
+            "brands":"Brands",
+            "allergens_en":"Allergens"
+        })[["Product","Brands","Allergens"]]
+
+        st.table(display)
+
+    # Ingredient Risk Analysis
+    with st.expander("🧂 Ingredient Risk Analysis", expanded=True):
+        if ing_risks:
+            df_ir = pd.DataFrame(list(ing_risks.items()), columns=["Ingredient","Risk"])
+            df_ir["Risk"] = df_ir["Risk"].apply(format_risk_level)
+            st.table(df_ir)
+        else:
+            st.write("No specific ingredient risks identified.")
+
+    # Additive Risk Analysis
+    with st.expander("⚗️ Additive Risk Analysis", expanded=False):
+        if add_risks:
+            df_ar = pd.DataFrame(list(add_risks.items()), columns=["Additive","Risk"])
+            df_ar["Risk"] = df_ar["Risk"].apply(format_risk_level)
+            st.table(df_ar)
+        else:
+            st.write("No additives of concern identified.")
+
+    # with st.expander("📊 Nutritional Overview of Top Food Categories", expanded=False):
+    #     try:
+    #         topn = preprocess_data(
+    #             df,
+    #             'category_level_1',
+    #             ['proteins_100g','carbohydrates_100g','fiber_100g','fat_100g','salt_100g'],
+    #             top_n=10
+    #         )
+    #         fig = create_radar_chart_with_dropdown(
+    #             topn['category_level_1'],
+    #             topn[['proteins_100g','carbohydrates_100g','fiber_100g','fat_100g','salt_100g']],
+    #             title='Top 10 Primary Categories Nutrition'
+    #         )
+    #         st.plotly_chart(fig, use_container_width=True)
+    #     except Exception as e:
+    #         st.error(f"Radar chart error: {e}")
+
+    st.stop()
+
+# ────────────────────────────────────────────────────
+# 9) PROFILE PAGE
+# ────────────────────────────────────────────────────
+if st.session_state.page == "profile":
+    if st.button("← Back to Search"):
+        st.session_state.page = "search"
+    prof = st.session_state.profile
+    st.header("📝 My Profile & Search History")
+    st.markdown(
+        f"- **Age:** {prof['age']}  \n"
+        f"- **Gender:** {prof['gender']}  \n"
+        f"- **Cholesterol:** {prof['cholesterol']}  \n"
+        f"- **Blood Pressure:** {prof['blood_pressure']}  \n"
+        f"- **Allergens:** {', '.join(prof['allergens']) or 'None'}  \n"
+        f"- **Dietary Restrictions:** {', '.join(prof['dietary_restrictions']) or 'None'}"
+    )
+    st.subheader("🕘 Scan History")
+    hist = list(history_col.find({"user_id": st.session_state.user_id}))
+    if not hist:
+        st.write("No scans yet.")
+    else:
+        dfh = pd.DataFrame(hist)[["timestamp","product_name","classification"]]
+        st.table(dfh.sort_values("timestamp", ascending=False).reset_index(drop=True))
+
+    st.stop()
+
+
+st.write("---")
+st.write("Developed with Nutriweb - Personalized Food Products Recommendation")     
+
+# # --- PERSONALIZED INGREDIENT-BASED ALTERNATIVES ---
+    # st.subheader("Personalized Ingredient-Based Alternatives")
+    # user_profile = st.session_state.user_profile
+    # # If the user has provided allergens, use category-level allergen substitution.
+    # if user_profile.get("allergens"):
+    #     # Traverse category hierarchy from level 6 down to level 1.
+    #     found_category = False
+    #     allergen_category_level = None
+    #     matched_allergen = None
+    #     for lvl in range(6, 0, -1):
+    #         cat_value = selected_product.get(f"category_level_{lvl}", "")
+    #         if cat_value and any(allergen in cat_value.lower() for allergen in user_allergens_list):
+    #             found_category = True
+    #             allergen_category_level = lvl
+    #             for allergen in user_allergens_list:
+    #                 if allergen in cat_value.lower():
+    #                     matched_allergen = allergen
+    #                     break
+    #             break
+    #     if found_category and allergen_category_level:
+    #         st.write(f"**Allergen-Friendly Alternatives:** (Products in '{selected_product.get(f'category_level_{allergen_category_level}', '')}' without '{matched_allergen}')")
+    #         alt_df = get_category_slice(selected_product, allergen_category_level)
+    #         # Exclude products containing any user allergens in ingredients_text.
+    #         pattern = "|".join([re.escape(a) for a in user_allergens_list])
+    #         if pattern:
+    #             alt_df = alt_df[~alt_df["ingredients_text"].str.lower().str.contains(pattern, na=False)]
+    #         alt_df = alt_df[alt_df["code"] != selected_product["code"]]
+    #         if not alt_df.empty:
+    #             st.table(alt_df[["product_name", "brands", "ingredients_text"]].head(5))
+    #         else:
+    #             st.write("No allergen-friendly alternatives found in this category.")
+    #     else:
+    #         # Fall back to FAISS-based recommendations.
+    #         cur_index_list = df.index[df["code"] == selected_product["code"]].tolist()
+    #         if cur_index_list:
+    #             cur_index = cur_index_list[0]
+    #             query_vector = combined_embeddings[cur_index:cur_index+1]
+    #             k = 20  # retrieve extra candidates.
+    #             distances, indices = faiss_index.search(query_vector, k)
+    #             indices_list = indices[0].tolist() if indices.size > 0 else []
+    #             if cur_index in indices_list:
+    #                 indices_list.remove(cur_index)
+    #             candidates = df.iloc[indices_list].copy()
+    #             # Filter candidates based on user's allergens.
+    #             avoid_list = set([a.strip().lower() for a in user_allergens_list])
+    #             def candidate_filter(row):
+    #                 ing_txt = str(row.get("ingredients_text", "")).lower()
+    #                 for allergen in avoid_list:
+    #                     if allergen in ing_txt:
+    #                         return False
+    #                 return True
+    #             filtered_candidates = candidates[candidates.apply(candidate_filter, axis=1)]
+    #             if not filtered_candidates.empty:
+    #                 st.table(filtered_candidates[["product_name", "brands"]].head(5))
+    #             else:
+    #                 st.write("No suitable personalized alternatives were found for this product.")
+    #         else:
+    #             st.write("Error: Could not determine product index for recommendations.")
+    # else:
+    #     # If no allergens specified, use FAISS-based recommendations directly.
+    #     cur_index_list = df.index[df["code"] == selected_product["code"]].tolist()
+    #     if cur_index_list:
+    #         cur_index = cur_index_list[0]
+    #         query_vector = combined_embeddings[cur_index:cur_index+1]
+    #         k = 20
+    #         distances, indices = faiss_index.search(query_vector, k)
+    #         indices_list = indices[0].tolist() if indices.size > 0 else []
+    #         if cur_index in indices_list:
+    #             indices_list.remove(cur_index)
+    #         candidates = df.iloc[indices_list].copy()
+    #         st.table(candidates[["product_name", "brands"]].head(5))
+    #     else:
+    #         st.write("Error: Could not determine product index for recommendations.")
+            
     # st.subheader("General Risk Assessment")
     # st.write(f"**Classification:** {classification}")
     # if risk_details.get("warning"):
@@ -202,116 +553,89 @@ if selected_product is not None:
     #     formatted_add_risks = pd.DataFrame([(k, format_risk_level(v)) for k, v in add_risks.items()], columns=["Additive", "Risk"])
     #     st.dataframe(formatted_add_risks, use_container_width=True)
     # else:
-    #     st.write("No additive-level risks identified.")
+    #     st.write("No additive-level risks identified.")        
+
     
-    # --- PERSONALIZED INGREDIENT-BASED ALTERNATIVES ---
-    st.subheader("Personalized Ingredient-Based Alternatives")
-    user_profile = st.session_state.user_profile
-    # If the user has provided allergens, use category-level allergen substitution.
-    if user_profile.get("allergens"):
-        # Traverse category hierarchy from level 6 down to level 1.
-        found_category = False
-        allergen_category_level = None
-        matched_allergen = None
-        for lvl in range(6, 0, -1):
-            cat_value = selected_product.get(f"category_level_{lvl}", "")
-            if cat_value and any(allergen in cat_value.lower() for allergen in user_allergens_list):
-                found_category = True
-                allergen_category_level = lvl
-                for allergen in user_allergens_list:
-                    if allergen in cat_value.lower():
-                        matched_allergen = allergen
-                        break
-                break
-        if found_category and allergen_category_level:
-            st.write(f"**Allergen-Friendly Alternatives:** (Products in '{selected_product.get(f'category_level_{allergen_category_level}', '')}' without '{matched_allergen}')")
-            alt_df = get_category_slice(selected_product, allergen_category_level)
-            # Exclude products containing any user allergens in ingredients_text.
-            pattern = "|".join([re.escape(a) for a in user_allergens_list])
-            if pattern:
-                alt_df = alt_df[~alt_df["ingredients_text"].str.lower().str.contains(pattern, na=False)]
-            alt_df = alt_df[alt_df["code"] != selected_product["code"]]
-            if not alt_df.empty:
-                st.table(alt_df[["product_name", "brands", "ingredients_text"]].head(5))
-            else:
-                st.write("No allergen-friendly alternatives found in this category.")
-        else:
-            # Fall back to FAISS-based recommendations.
-            cur_index_list = df.index[df["code"] == selected_product["code"]].tolist()
-            if cur_index_list:
-                cur_index = cur_index_list[0]
-                query_vector = combined_embeddings[cur_index:cur_index+1]
-                k = 20  # retrieve extra candidates.
-                distances, indices = faiss_index.search(query_vector, k)
-                indices_list = indices[0].tolist() if indices.size > 0 else []
-                if cur_index in indices_list:
-                    indices_list.remove(cur_index)
-                candidates = df.iloc[indices_list].copy()
-                # Filter candidates based on user's allergens.
-                avoid_list = set([a.strip().lower() for a in user_allergens_list])
-                def candidate_filter(row):
-                    ing_txt = str(row.get("ingredients_text", "")).lower()
-                    for allergen in avoid_list:
-                        if allergen in ing_txt:
-                            return False
-                    return True
-                filtered_candidates = candidates[candidates.apply(candidate_filter, axis=1)]
-                if not filtered_candidates.empty:
-                    st.table(filtered_candidates[["product_name", "brands"]].head(5))
-                else:
-                    st.write("No suitable personalized alternatives were found for this product.")
-            else:
-                st.write("Error: Could not determine product index for recommendations.")
-    else:
-        # If no allergens specified, use FAISS-based recommendations directly.
-        cur_index_list = df.index[df["code"] == selected_product["code"]].tolist()
-        if cur_index_list:
-            cur_index = cur_index_list[0]
-            query_vector = combined_embeddings[cur_index:cur_index+1]
-            k = 20
-            distances, indices = faiss_index.search(query_vector, k)
-            indices_list = indices[0].tolist() if indices.size > 0 else []
-            if cur_index in indices_list:
-                indices_list.remove(cur_index)
-            candidates = df.iloc[indices_list].copy()
-            st.table(candidates[["product_name", "brands"]].head(5))
-        else:
-            st.write("Error: Could not determine product index for recommendations.")
-            
-    st.subheader("General Risk Assessment")
-    st.write(f"**Classification:** {classification}")
-    if risk_details.get("warning"):
-        st.error(risk_details.get("warning"))
-    st.subheader("Ingredient Risk Analysis")
-    if ing_risks:
-        formatted_ing_risks = pd.DataFrame([(k, format_risk_level(v)) for k, v in ing_risks.items()], columns=["Ingredient", "Risk"])
-        st.dataframe(formatted_ing_risks, use_container_width=True)
-    else:
-        st.write("No ingredient-level risks identified.")
-    st.subheader("Additive Risk Analysis")
-    if add_risks:
-        formatted_add_risks = pd.DataFrame([(k, format_risk_level(v)) for k, v in add_risks.items()], columns=["Additive", "Risk"])
-        st.dataframe(formatted_add_risks, use_container_width=True)
-    else:
-        st.write("No additive-level risks identified.")        
+# # ------------------------------------------------------------------
+# # MAIN: PRODUCT SEARCH
+# st.markdown(
+#     "<h1 style='color: green;'>NutriWeb: Personalized Food Products Recommendation System</h41",
+#     unsafe_allow_html=True
+# )
 
-# --- RADAR CHART: Nutritional Overview by Category ---
-st.subheader("Nutritional Overview of Top Food Categories")
+# st.markdown("##### Search for a product by name or barcode")
 
-# You can limit the dataset to top categories for performance
-category_col = 'category_level_1'
-nutrient_cols = ['proteins_100g', 'carbohydrates_100g', 'fiber_100g', 'fat_100g', 'salt_100g']
+# search_mode = st.radio(
+#     label="",
+#     options=["Product Name", "Barcode"],
+#     horizontal=True
+# )
 
-try:
-    top_category_nutrition = preprocess_data(df, category_col, nutrient_cols, top_n=10)
-    categories = top_category_nutrition[category_col]
-    values = top_category_nutrition[nutrient_cols]
+# query = st.text_input(f"Enter { 'name' if search_mode == 'Product Name' else 'barcode' }:")
+ 
+# selected_product = None
+# if query:
+#     if search_mode == "Product Name":
+#         matches = df[df['product_name'].str.contains(query, case=False, na=False)]
+#         if matches.empty:
+#             st.warning("No products found with that name. Please try a different query.")
+#         elif len(matches) > 1:
+#             product_choice = st.selectbox("Select a product", matches['product_name'].unique())
+#             if product_choice:
+#                 selected_product = df[df['product_name'] == product_choice].iloc[0]
+#         else:
+#             selected_product = matches.iloc[0]
+#     else:  # Barcode search
+#         matches = df[df['code'].astype(str) == str(query).strip()]
+#         if matches.empty:
+#             st.warning("No product found with that barcode. Please try a different code.")
+#         else:
+#             selected_product = matches.iloc[0]
+#             st.write(f"**Product found:** {selected_product['product_name']}")
+
+# # ------------------------------------------------------------------
+# # FUNCTION FOR VISUAL ENHANCEMENTS
+# def format_risk_level(risk):
+#     if risk == "Avoid":
+#         return "🔥 Avoid"
+#     elif risk == "Caution":
+#         return "⚠️ Caution"
+#     return "✅ Safe"
+# # ------------------------------------------------------------------
+# # IF PRODUCT IS SELECTED, DISPLAY ANALYSIS & RECOMMENDATIONS
+# if selected_product is not None:
+#     # Display product header (name and brand, if available)
+#     product_name = selected_product.get("product_name", "Unknown Product")
+#     product_brand = selected_product.get("brands") if "brands" in selected_product else None
+#     if pd.notna(product_brand) and product_brand not in [None, "", np.nan]:
+#         st.header(f"{product_brand} – {product_name}")
+#     else:
+#         st.header(product_name)
     
-    fig = create_radar_chart_with_dropdown(categories, values, title='Top 10 Primary Categories by Nutritional Facts')
-    st.plotly_chart(fig, use_container_width=True)
-
-except Exception as e:
-    st.error(f"⚠️ Error displaying radar chart: {e}")
+#     # --- RISK ASSESSMENT (Single Block) ---
+#     classification, ing_risks, add_risks = classify_product(
+#         selected_product.get("ingredients_text", ""),
+#         selected_product.get("additives_en", "")
+#     )
+#     risk_details = assess_product_risks(
+#         selected_product.get("ingredients_text", ""),
+#         selected_product.get("additives_en", "")
+#     )
+#     # PERSONALIZED ALLERGEN OVERRIDE:
+#     # Convert the allergens stored in the user profile to a list.
+#     user_allergens_data = st.session_state.user_profile.get("allergens", "")
+#     if isinstance(user_allergens_data, str):
+#         user_allergens_list = [a.strip().lower() for a in user_allergens_data.split(",") if a.strip()]
+#     else:
+#         user_allergens_list = [a.strip().lower() for a in user_allergens_data]
     
-st.write("----")
-st.write("Developed with NutriWeb – Personalized Food Recommendations")
+#     cleaned_ingredients = str(selected_product.get("ingredients_text", "")).lower()
+#     if user_allergens_list and any(allergen in cleaned_ingredients for allergen in user_allergens_list):
+#         classification = "Avoid"
+#         risk_details["warning"] = "This product contains allergens you are sensitive to."
+    
+    
+    
+    
+# st.write("----")
+# st.write("Developed with NutriWeb – Personalized Food Recommendations")

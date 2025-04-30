@@ -32,6 +32,110 @@ def normalize_text(text):
         return ""
     return re.sub(r'\W+', ' ', text).lower().strip()
 
+# def name_match_boost(input_name, product_names, boost_value=0.2):
+#     input_clean = normalize_text(input_name)
+#     return np.array([
+#         boost_value if input_clean in normalize_text(name) else 0.0
+#         for name in product_names
+#     ])
+
+# def map_nutrition_grade(grade):
+#     grade_mapping = {
+#         'a': 1.0,
+#         'b': 0.8,
+#         'c': 0.6,
+#         'd': 0.4,
+#         'e': 0.2
+#     }
+#     if isinstance(grade, str):
+#         return grade_mapping.get(grade.lower(), 0.5)  # Default neutral if unknown
+#     return 0.5
+
+# def recommend_by_ingredients(ingredients_text, product_name, df, product_code, top_n=5, allergens_to_avoid=[], 
+#                               ingredient_weight=0.60, name_weight=0.25, nutrition_weight=0.15, match_boost=0.2):
+#     if pd.isna(ingredients_text) or ingredients_text.strip() == "":
+#         print("⚠️ No ingredients available for ingredient-based recommendations.")
+#         return None
+
+#     MODEL = SentenceTransformer('all-MiniLM-L6-v2')
+
+#     # Load and normalize precomputed embeddings
+#     ingredient_embeddings = np.load('/Users/krishvenigalla/Desktop/NutriWeb_clone/embeddings/ingredient_embeddings.npy')
+#     name_embeddings = np.load('/Users/krishvenigalla/Desktop/NutriWeb_clone/embeddings/product_name_embeddings.npy')
+
+#     # Encode input queries
+#     ingredient_query = MODEL.encode([ingredients_text], normalize_embeddings=True)[0]
+#     name_query = MODEL.encode([product_name], normalize_embeddings=True)[0]
+
+#     # Create a FAISS index for embeddings (ingredients + name)
+#     dimension = ingredient_query.shape[0]
+#     combined_embeddings = (ingredient_weight * ingredient_embeddings) + (name_weight * name_embeddings)
+#     index = faiss.IndexFlatL2(dimension)
+#     index.add(combined_embeddings)
+
+#     combined_query = (ingredient_weight * ingredient_query) + (name_weight * name_query)
+
+#     distances, indices = index.search(np.array([combined_query]), top_n * 20)
+#     candidate_rows = df.iloc[indices[0]].copy()
+#     candidate_rows = candidate_rows[candidate_rows['code'] != product_code]
+
+#     scores = distances[0]
+
+#     # Apply Name Boost
+#     boost = name_match_boost(product_name, candidate_rows['product_name'], boost_value=match_boost)
+#     scores_with_boost = scores[:len(candidate_rows)] + boost
+
+#     # Nutrition grade adjustment
+#     input_nutrition_score = map_nutrition_grade(df[df['code'] == product_code]['nutrition_grade_fr'].values[0])
+#     candidate_rows['nutrition_score'] = candidate_rows['nutrition_grade_fr'].apply(map_nutrition_grade)
+    
+#     nutrition_similarity = 1 - np.abs(candidate_rows['nutrition_score'] - input_nutrition_score)  # Closer nutrition grades get higher score
+
+#     # Final combined score
+#     final_scores = (
+#         (ingredient_weight + name_weight) * scores_with_boost * -1  # Negative because FAISS distance; lower is better
+#         + nutrition_weight * nutrition_similarity
+#     )
+
+#     candidate_rows['final_score'] = final_scores
+
+#     if allergens_to_avoid:
+#         candidate_rows = filter_by_allergens(candidate_rows, allergens_to_avoid)
+
+#     candidate_rows['allergens_en'] = candidate_rows['allergens_en'].apply(clean_allergens)
+
+#     return candidate_rows.sort_values('final_score', ascending=False)[['product_name', 'additives_en', 'allergens_en', 'nutrition_grade_fr']].head(top_n)
+
+# def recommend_products(bar_code, df, top_n=5, allergens_to_avoid=[], 
+#                         ingredient_weight=0.60, name_weight=0.25, nutrition_weight=0.15, match_boost=0.2):
+#     product_row = df[df['code'] == bar_code]
+
+#     if product_row.empty:
+#         print("❌ No product found with the given barcode!")
+#         return None
+
+#     primary_category = get_primary_category(product_row.iloc[0]['categories_en'])
+
+#     if primary_category:
+#         filtered_products = df[df['categories_en'].str.contains(primary_category, na=False)]
+#         if allergens_to_avoid:
+#             filtered_products = filter_by_allergens(filtered_products, allergens_to_avoid)
+#         filtered_products['allergens_en'] = filtered_products['allergens_en'].apply(clean_allergens)
+#         return filtered_products[['product_name', 'additives_en', 'allergens_en', 'nutrition_grade_fr']].head(top_n)
+
+#     return recommend_by_ingredients(
+#         product_row.iloc[0]['ingredients_text'],
+#         product_row.iloc[0]['product_name'],
+#         df,
+#         product_code=bar_code,
+#         top_n=top_n,
+#         allergens_to_avoid=allergens_to_avoid,
+#         ingredient_weight=ingredient_weight,
+#         name_weight=name_weight,
+#         nutrition_weight=nutrition_weight,
+#         match_boost=match_boost
+#     )
+
 def name_match_boost(input_name, product_names, boost_value=0.2):
     input_clean = normalize_text(input_name)
     return np.array([
@@ -39,20 +143,10 @@ def name_match_boost(input_name, product_names, boost_value=0.2):
         for name in product_names
     ])
 
-def map_nutrition_grade(grade):
-    grade_mapping = {
-        'a': 1.0,
-        'b': 0.8,
-        'c': 0.6,
-        'd': 0.4,
-        'e': 0.2
-    }
-    if isinstance(grade, str):
-        return grade_mapping.get(grade.lower(), 0.5)  # Default neutral if unknown
-    return 0.5
+import faiss
 
-def recommend_by_ingredients(ingredients_text, product_name, df, product_code, top_n=5, allergens_to_avoid=[], 
-                              ingredient_weight=0.60, name_weight=0.25, nutrition_weight=0.15, match_boost=0.2):
+
+def recommend_by_ingredients(ingredients_text, product_name, df, product_code, top_n=5, allergens_to_avoid=[], name_weight=0.3, match_boost=0.2):
     if pd.isna(ingredients_text) or ingredients_text.strip() == "":
         print("⚠️ No ingredients available for ingredient-based recommendations.")
         return None
@@ -60,54 +154,51 @@ def recommend_by_ingredients(ingredients_text, product_name, df, product_code, t
     MODEL = SentenceTransformer('all-MiniLM-L6-v2')
 
     # Load and normalize precomputed embeddings
+    #Change the path to your local directory where the embeddings are stored
     ingredient_embeddings = np.load('/Users/krishvenigalla/Desktop/NutriWeb_clone/embeddings/ingredient_embeddings.npy')
     name_embeddings = np.load('/Users/krishvenigalla/Desktop/NutriWeb_clone/embeddings/product_name_embeddings.npy')
 
-    # Encode input queries
+    # Normalize the loaded embeddings
+    # def normalize_matrix(m):
+    #     return m / np.linalg.norm(m, axis=1, keepdims=True)
+
+    # ingredient_embeddings = normalize_matrix(ingredient_embeddings)
+    # name_embeddings = normalize_matrix(name_embeddings)
+
+    # Combine normalized embeddings, then normalize again
+    combined_embeddings = (1 - name_weight) * ingredient_embeddings + name_weight * name_embeddings
+    #combined_embeddings = normalize_matrix(combined_embeddings)
+
+    # Encode and normalize queries
     ingredient_query = MODEL.encode([ingredients_text], normalize_embeddings=True)[0]
     name_query = MODEL.encode([product_name], normalize_embeddings=True)[0]
 
-    # Create a FAISS index for embeddings (ingredients + name)
-    dimension = ingredient_query.shape[0]
-    combined_embeddings = (ingredient_weight * ingredient_embeddings) + (name_weight * name_embeddings)
+    combined_query = (1 - name_weight) * ingredient_query + name_weight * name_query
+    #combined_query = combined_query / np.linalg.norm(combined_query)
+
+    # FAISS search with cosine similarity
+    dimension = combined_query.shape[0]
     index = faiss.IndexFlatL2(dimension)
     index.add(combined_embeddings)
-
-    combined_query = (ingredient_weight * ingredient_query) + (name_weight * name_query)
 
     distances, indices = index.search(np.array([combined_query]), top_n * 20)
     candidate_rows = df.iloc[indices[0]].copy()
     candidate_rows = candidate_rows[candidate_rows['code'] != product_code]
 
     scores = distances[0]
-
-    # Apply Name Boost
     boost = name_match_boost(product_name, candidate_rows['product_name'], boost_value=match_boost)
-    scores_with_boost = scores[:len(candidate_rows)] + boost
-
-    # Nutrition grade adjustment
-    input_nutrition_score = map_nutrition_grade(df[df['code'] == product_code]['nutrition_grade_fr'].values[0])
-    candidate_rows['nutrition_score'] = candidate_rows['nutrition_grade_fr'].apply(map_nutrition_grade)
-    
-    nutrition_similarity = 1 - np.abs(candidate_rows['nutrition_score'] - input_nutrition_score)  # Closer nutrition grades get higher score
-
-    # Final combined score
-    final_scores = (
-        (ingredient_weight + name_weight) * scores_with_boost * -1  # Negative because FAISS distance; lower is better
-        + nutrition_weight * nutrition_similarity
-    )
-
-    candidate_rows['final_score'] = final_scores
+    final_scores = scores[:len(candidate_rows)] + boost
+    candidate_rows['score'] = final_scores
 
     if allergens_to_avoid:
         candidate_rows = filter_by_allergens(candidate_rows, allergens_to_avoid)
 
     candidate_rows['allergens_en'] = candidate_rows['allergens_en'].apply(clean_allergens)
 
-    return candidate_rows.sort_values('final_score', ascending=False)[['product_name', 'additives_en', 'allergens_en', 'nutrition_grade_fr']].head(top_n)
+    return candidate_rows.sort_values('score', ascending=False)[['product_name', 'additives_en', 'allergens_en', 'nutrition_grade_fr']].head(top_n)
 
-def recommend_products(bar_code, df, top_n=5, allergens_to_avoid=[], 
-                        ingredient_weight=0.60, name_weight=0.25, nutrition_weight=0.15, match_boost=0.2):
+
+def recommend_products(bar_code, df, top_n=5, allergens_to_avoid=[], name_weight=0.3, match_boost=0.2):
     product_row = df[df['code'] == bar_code]
 
     if product_row.empty:
@@ -130,8 +221,7 @@ def recommend_products(bar_code, df, top_n=5, allergens_to_avoid=[],
         product_code=bar_code,
         top_n=top_n,
         allergens_to_avoid=allergens_to_avoid,
-        ingredient_weight=ingredient_weight,
         name_weight=name_weight,
-        nutrition_weight=nutrition_weight,
         match_boost=match_boost
     )
+

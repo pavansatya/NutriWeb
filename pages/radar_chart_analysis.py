@@ -9,7 +9,7 @@ from modules.radar_chart import preprocess_data, create_radar_chart_with_dropdow
 st.title("📊 Nutritional Overview of Top 10 food categories - Radar Chart")
 
 # Load data
-df = st.session_state.get("df")
+df = pd.read_csv('useful_data/cleaned_data.csv') #st.session_state.get("df")
 if df is None:
     st.error("Data not loaded yet. Please start from the homepage first.")
     st.stop()

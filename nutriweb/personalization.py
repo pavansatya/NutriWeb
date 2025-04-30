@@ -49,17 +49,12 @@ def assess_product_for_user(product_ingredients: list[str], base_risk: dict, pro
                 user_overall = "Caution"
     return {"user_overall_risk": user_overall, "flags": flags}
 
-def get_user_profile(age: int, gender: str, height: float, weight: float,
-                     cholesterol: str, blood_pressure: str, allergens: str, diet_type: str) -> dict:
+def get_user_profile(cholesterol: str, blood_pressure: str, allergens: str, diet_type: str) -> dict:
     """
     Create a user profile dictionary from inputs.
     'allergens' and 'dietary_restrictions' are stored as lists.
     """
     return {
-        "age": age,
-        "gender": gender,
-        "height": height,
-        "weight": weight,
         "cholesterol": cholesterol,
         "blood_pressure": blood_pressure,
         "allergens": [a.strip() for a in allergens.split(',') if a.strip()],
