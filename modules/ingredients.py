@@ -1,6 +1,20 @@
 import re
 
 def clean_ingredients(text):
+    """
+    Cleans and standardizes an ingredient text string by removing unnecessary content and formatting.
+
+    Parameters:
+        text (str): The raw ingredient text to be cleaned.
+
+    Returns:
+        str: A cleaned version of the ingredient text with:
+             - Parenthetical and bracketed content removed
+             - Converted to lowercase
+             - Additive codes (e.g., E300, E120ii) removed
+             - Periods and commas cleaned
+             - Extra whitespace normalized
+    """
     # Remove content in parentheses and brackets
     text = re.sub(r'\([^)]*\)', '', text)
     text = re.sub(r'\[[^\]]*\]', '', text)
@@ -9,7 +23,11 @@ def clean_ingredients(text):
     text = text.lower()
     
     # Remove trailing full stop if it exists
-    text = re.sub(r'\.$', '', text)  # This targets only a period at the very end
+    text = re.sub(r'[.,]', ' ', text)
+    text = re.sub(r'\.$', '', text)  
+    
+    # Remove additives inside ingredinets
+    text = re.sub(r'\be\d+[a-z]*\b', '', text)
     
     # Normalize whitespace and clean commas
     text = re.sub(r'\s+', ' ', text).strip()

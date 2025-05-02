@@ -4,6 +4,18 @@ from plotly.subplots import make_subplots
 
 
 def preprocess_data(data, category_col, nutrient_cols, top_n=10):
+    """
+    Preprocesses nutrient data for radar chart visualization by scaling values and aggregating by category.
+
+    Parameters:
+        data (pd.DataFrame): The input DataFrame containing nutrient and category data.
+        category_col (str): The column name representing food categories.
+        nutrient_cols (list): A list of column names representing nutritional attributes.
+        top_n (int): The number of top categories (by frequency) to include.
+
+    Returns:
+        pd.DataFrame: A DataFrame with average scaled nutrient values per top category.
+    """
     results = []
     top_categories = data[category_col].value_counts().nlargest(top_n).index
 
@@ -28,31 +40,16 @@ def preprocess_data(data, category_col, nutrient_cols, top_n=10):
     return filtered_data.groupby(category_col)[nutrient_cols].mean().reset_index()
 
 
-def create_radar_chart(categories, values, title):
-    fig = go.Figure()
-    
-    for i, category in enumerate(categories):
-        fig.add_trace(go.Scatterpolar(
-            r=values.iloc[i].tolist(),
-            theta=values.columns,
-            fill='toself',
-            name=category
-        ))
-
-    fig.update_layout(
-        polar=dict(
-            radialaxis=dict(
-                visible=True,
-                range=[0, 1]   
-            )
-        ),
-        title=title,
-        showlegend=True
-    )
-    return fig
-
-
 def get_category_colors(categories):
+    """
+    Assigns a distinct color to each category from a predefined color palette.
+
+    Parameters:
+        categories (list): List of category names.
+
+    Returns:
+        dict: A mapping of category names to their assigned color hex codes.
+    """
     color_palette = [
         '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
         '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
@@ -62,6 +59,17 @@ def get_category_colors(categories):
 
 
 def create_radar_chart_with_dropdown(categories, values, title):
+    """
+    Creates an interactive radar chart with a dropdown menu to view individual category plots.
+
+    Parameters:
+        categories (list): List of category names to include in the dropdown.
+        values (pd.DataFrame): DataFrame with rows for categories and columns for nutrient values.
+        title (str): Title of the radar chart.
+
+    Returns:
+        go.Figure: A Plotly figure object with interactive dropdown-enabled radar chart.
+    """
     fig = go.Figure()
     color_map = get_category_colors(categories)  
     

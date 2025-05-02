@@ -17,6 +17,16 @@ allergen_mapping = {
 
 # Function to identify allergens in the ingredients column using regex
 def find_allergens(ingredients):
+    """
+    Identifies known allergens in a given ingredient text using keyword matching.
+
+    Parameters:
+        ingredients (str): A string containing the ingredients list.
+
+    Returns:
+        list: A list of allergens found in the ingredient text, formatted as 'en:<allergen>'.
+              Returns an empty list if no allergens are found or input is NaN.
+    """
     if pd.isna(ingredients):
         return []
     
@@ -31,6 +41,18 @@ def find_allergens(ingredients):
 
 # Function to fill missing allergens based on product name and ingredients
 def fill_allergens(row):
+    """
+    Fills missing 'allergens_en' values in a DataFrame row by detecting allergens
+    from 'product_name' and 'ingredients_text'.
+
+    Parameters:
+        row (pd.Series): A row from a DataFrame containing 'product_name',
+                         'ingredients_text', and 'allergens_en' columns.
+
+    Returns:
+        str or None: A comma-separated string of detected allergens in 'en:<allergen>' format,
+                     or the existing 'allergens_en' value if already present.
+    """
     if pd.isna(row['allergens_en']):
         allergens_from_name = []
         for allergen, keywords in allergen_mapping.items():

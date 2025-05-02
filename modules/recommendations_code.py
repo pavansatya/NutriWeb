@@ -4,11 +4,30 @@ import numpy as np
 import pandas as pd
 
 def get_primary_category(categories_en):
+    """
+    Extracts the last (most specific) category from a comma-separated category string.
+
+    Parameters:
+        categories_en (str): A comma-separated string of category names.
+
+    Returns:
+        str or None: The last category in the list, or None if input is NaN.
+    """
     if pd.isna(categories_en):
         return None
     return categories_en.split(',')[-1].strip()
 
 def filter_by_allergens(products, allergens_to_avoid):
+    """
+    Filters out products that contain any of the specified allergens, excluding 'unknown' entries.
+
+    Parameters:
+        products (pd.DataFrame): DataFrame containing a column 'allergens_en'.
+        allergens_to_avoid (list): List of allergen strings to exclude.
+
+    Returns:
+        pd.DataFrame: Filtered DataFrame excluding products with matching allergens.
+    """
     allergens_to_avoid = [allergen.lower().strip() for allergen in allergens_to_avoid]
     
     def has_allergen_to_avoid(allergens):
@@ -21,12 +40,34 @@ def filter_by_allergens(products, allergens_to_avoid):
     return products[~products['allergens_en'].apply(has_allergen_to_avoid)]
 
 def clean_allergens(allergens):
+    """
+    Removes 'en:' prefix and trims whitespace from a comma-separated string of allergens.
+
+    Parameters:
+        allergens (str or any): Comma-separated allergen string, or any other type.
+
+    Returns:
+        str or original input: Cleaned allergen string or original input if not a string.
+    """
     if isinstance(allergens, str):
         allergens = [a.replace('en:', '').strip() for a in allergens.split(',')]
         return ', '.join(allergens)
     return allergens 
 
 def recommend_products(bar_code, df, top_n=5, allergens_to_avoid=[]):
+    """
+    Recommends similar products based on the primary category of a given product identified by barcode.
+    Falls back to ingredient-based similarity if no category is found.
+
+    Parameters:
+        bar_code (str or int): Barcode of the reference product.
+        df (pd.DataFrame): DataFrame containing product data.
+        top_n (int): Number of recommendations to return.
+        allergens_to_avoid (list): List of allergens to exclude in recommendations.
+
+    Returns:
+        pd.DataFrame or None: Recommended products as a DataFrame, or None if the barcode is not found.
+    """
     # Step 1: Find the exact product by barcode
     product_row = df[df['code'] == bar_code]
     
@@ -52,6 +93,18 @@ def recommend_products(bar_code, df, top_n=5, allergens_to_avoid=[]):
     return recommend_by_ingredients(product_row.iloc[0]['ingredients_text'], df, top_n, allergens_to_avoid)
 
 def recommend_by_ingredients(ingredients_text, df, top_n=5, allergens_to_avoid=[]):
+    """
+    Recommends products based on similarity of ingredient embeddings using FAISS index search.
+
+    Parameters:
+        ingredients_text (str): Ingredient string of the reference product.
+        df (pd.DataFrame): DataFrame containing product and ingredient information.
+        top_n (int): Number of similar products to recommend.
+        allergens_to_avoid (list): List of allergens to filter from results.
+
+    Returns:
+        pd.DataFrame or None: Recommended products as a DataFrame, or None if ingredients are not available.
+    """
     if pd.isna(ingredients_text) or ingredients_text.strip() == "":
         print("⚠️ No ingredients available for ingredient-based recommendations.")
         return None

@@ -3,6 +3,16 @@ from rapidfuzz import fuzz, process
 
 # Function to correct vowels
 def correct_vowels(word, candidates):
+    """
+    Filters a list of candidate words to those that match the input word, allowing vowel substitutions.
+
+    Parameters:
+        word (str): The input word to compare.
+        candidates (list): A list of candidate strings to check for vowel-tolerant matches.
+
+    Returns:
+        list: A list of candidates that match the input word, allowing flexible vowel differences.
+    """
     vowels = 'aeiou'
     word_lower = word.lower()
     corrected_candidates = []
@@ -19,6 +29,17 @@ def correct_vowels(word, candidates):
 
 # Function to find the best matches
 def suggest_categories(input_word, categories, top_n=5):
+    """
+    Suggests the most relevant category names based on fuzzy string matching and vowel-insensitive comparison.
+
+    Parameters:
+        input_word (str): The word to match against known categories.
+        categories (pd.Series): A Pandas Series containing category names.
+        top_n (int): The maximum number of suggestions to return.
+
+    Returns:
+        list: A list of up to `top_n` best-matching category suggestions.
+    """
     categories = categories.str.lower().unique()
 
     matches = process.extract(input_word.lower(), categories, scorer=fuzz.ratio, limit=len(categories))
