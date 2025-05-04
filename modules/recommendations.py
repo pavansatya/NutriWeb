@@ -139,7 +139,7 @@ def recommend_by_ingredients(ingredients_text, product_name, df, product_code, t
     index = faiss.IndexFlatIP(dimension)
     index.add(combined_embeddings)
 
-    distances, indices = index.search(np.array([combined_query]), top_n * 20)
+    distances, indices = index.search(np.array([combined_query]), top_n * 40)
     candidate_rows = df.iloc[indices[0]].copy()
     candidate_rows = candidate_rows[candidate_rows['code'] != product_code]
 
