@@ -1,10 +1,12 @@
+import os
+os.environ.setdefault("USE_TF", "0")  # prevent Keras 3 / tf-keras conflict
+
 import streamlit as st
 import pandas as pd
 import numpy as np
 import zipfile
 import faiss
 import re
-import os
 import gdown
 from huggingface_hub import hf_hub_download
 from datetime import datetime
