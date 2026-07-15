@@ -7,3 +7,6 @@ my_embeddings/
 # Optionally, ignore virtual environment directories
 .venv/
 env/
+
+# Secrets — never commit, set via Space "Repository secrets" instead
+.streamlit/secrets.toml
