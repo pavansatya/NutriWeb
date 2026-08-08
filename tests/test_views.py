@@ -77,6 +77,43 @@ class TestSearchPage:
         assert at.warning
 
 
+class TestSearchResilience:
+    """Search must survive a missing full-text-search extension.
+
+    The extension is present on the machine that builds the catalog but not in
+    a fresh container. An unconditional `LOAD fts` took the deployed Space down
+    on startup with an IOException before the first page could render.
+    """
+
+    def test_loading_fts_never_raises(self):
+        import duckdb
+
+        con = duckdb.connect(str(catalog.DEFAULT_CATALOG), read_only=True)
+        con.execute("SET autoinstall_known_extensions=false")
+        con.execute("SET autoload_known_extensions=false")
+        con.execute("SET extension_directory='/nonexistent/nutriweb-test'")
+        # Returns a bool either way; the point is that it does not raise.
+        assert catalog._try_load_fts(con) in (True, False)
+
+    def test_fallback_search_returns_results(self):
+        results = catalog._search_without_fts("yogurt", 5)
+        assert results
+        assert all(r.get("code") for r in results)
+
+    def test_fallback_matches_brand_as_well_as_name(self):
+        assert catalog._search_without_fts("kellogg", 5)
+
+    def test_fallback_respects_the_limit(self):
+        assert len(catalog._search_without_fts("a", 3)) <= 3
+
+    def test_fallback_handles_no_match(self):
+        assert catalog._search_without_fts("zzzqqqxnotathing", 5) == []
+
+    def test_barcode_lookup_does_not_depend_on_fts(self):
+        product = catalog.get_product("7622210449283")
+        assert product is None or product.get("code")
+
+
 class TestProductPage:
     def test_renders_for_a_real_product(self, sample_code):
         assert_clean(run("views/product.py", selected_code=sample_code), "product")

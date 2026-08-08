@@ -64,8 +64,28 @@ def _database() -> duckdb.DuckDBPyConnection:
             "  python pipeline/03_score.py"
         )
     con = duckdb.connect(str(path), read_only=True)
-    con.execute("LOAD fts")
+    _try_load_fts(con)
     return con
+
+
+def _try_load_fts(con: duckdb.DuckDBPyConnection) -> bool:
+    """Best-effort load of the full-text-search extension.
+
+    Must never raise. The extension is present on the machine that builds the
+    catalog but not in a fresh container, and an unconditional `LOAD fts` there
+    takes the whole app down on startup.
+
+    In practice the BM25 macros are persisted inside the catalog file and work
+    without the extension, so this is belt-and-braces: if it cannot be loaded
+    we fall back to a LIKE search rather than failing.
+    """
+    for statement in ("LOAD fts", "INSTALL fts; LOAD fts"):
+        try:
+            con.execute(statement)
+            return True
+        except duckdb.Error:
+            continue
+    return False
 
 
 # Streamlit runs every user session on its own thread, and a DuckDB connection
@@ -82,7 +102,7 @@ def connect() -> duckdb.DuckDBPyConnection:
     con = getattr(_local, "con", None)
     if con is None:
         con = _database().cursor()
-        con.execute("LOAD fts")
+        _try_load_fts(con)
         _local.con = con
     return con
 
@@ -126,21 +146,54 @@ def search(query: str, limit: int = 30) -> list[dict]:
         product = get_product(query)
         return [product] if product else []
 
-    df = con.execute(
+    try:
+        df = con.execute(
+            f"""
+            WITH scored AS (
+                SELECT code, fts_main_products.match_bm25(code, ?) AS relevance
+                FROM products
+            )
+            SELECT {PRODUCT_COLUMNS}, relevance
+            FROM scored JOIN catalog USING (code)
+            WHERE relevance IS NOT NULL
+            ORDER BY
+                relevance * (CASE WHEN health_score IS NOT NULL THEN 1.0 ELSE 0.4 END)
+                    * (1 + ln(1 + COALESCE(unique_scans_n, 0)) / 10) DESC
+            LIMIT ?
+            """,
+            [query, limit],
+        ).fetchdf()
+        return df.to_dict("records")
+    except duckdb.Error:
+        # The BM25 macros live in the catalog file and normally work without
+        # the extension, but if anything about full-text search is unavailable
+        # a degraded search beats a broken page.
+        return _search_without_fts(query, limit)
+
+
+def _search_without_fts(query: str, limit: int) -> list[dict]:
+    """Substring search fallback, used only when BM25 is unavailable.
+
+    Ranks a name match above a brand match and a prefix above a mid-word hit,
+    then favours popular, scoreable products -- roughly what BM25 gives us,
+    without needing the extension.
+    """
+    pattern = f"%{query.lower()}%"
+    prefix = f"{query.lower()}%"
+    df = connect().execute(
         f"""
-        WITH scored AS (
-            SELECT code, fts_main_products.match_bm25(code, ?) AS relevance
-            FROM products
-        )
-        SELECT {PRODUCT_COLUMNS}, relevance
-        FROM scored JOIN catalog USING (code)
-        WHERE relevance IS NOT NULL
+        SELECT {PRODUCT_COLUMNS}
+        FROM catalog
+        WHERE lower(product_name) LIKE ? OR lower(COALESCE(brands, '')) LIKE ?
         ORDER BY
-            relevance * (CASE WHEN health_score IS NOT NULL THEN 1.0 ELSE 0.4 END)
-                * (1 + ln(1 + COALESCE(unique_scans_n, 0)) / 10) DESC
+            (CASE WHEN lower(product_name) LIKE ? THEN 2
+                  WHEN lower(product_name) LIKE ? THEN 1
+                  ELSE 0 END) DESC,
+            (CASE WHEN health_score IS NOT NULL THEN 1 ELSE 0 END) DESC,
+            COALESCE(unique_scans_n, 0) DESC
         LIMIT ?
         """,
-        [query, limit],
+        [pattern, pattern, prefix, pattern, limit],
     ).fetchdf()
     return df.to_dict("records")
 

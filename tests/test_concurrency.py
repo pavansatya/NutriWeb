@@ -50,18 +50,25 @@ def run_concurrently(worker, count: int) -> list[str]:
 
 class TestThreadSafety:
     def test_each_thread_gets_its_own_cursor(self):
-        """Two threads must not share one cursor, or results interleave."""
+        """Two threads must not share one cursor, or results interleave.
+
+        The cursor objects are kept alive in `cursors` for the duration of the
+        assertion. Comparing bare id() values would be flaky: once a worker
+        thread exits its thread-local cursor can be collected, and CPython
+        happily reuses the freed address for the next thread's cursor.
+        """
         catalog.connect()  # warm the shared database handle
-        seen: list[int] = []
+        cursors: list = []
         lock = threading.Lock()
 
         def worker(_: int) -> None:
             con = catalog.connect()
             with lock:
-                seen.append(id(con))
+                cursors.append(con)  # holding a reference prevents id reuse
 
         assert not run_concurrently(worker, 8)
-        assert len(set(seen)) == 8, "threads shared a cursor"
+        assert len(cursors) == 8
+        assert len({id(c) for c in cursors}) == 8, "threads shared a cursor"
 
     def test_concurrent_searches_all_return_results(self):
         catalog.connect()
