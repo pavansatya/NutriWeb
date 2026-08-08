@@ -10,6 +10,11 @@ used, which had no versioning and no checksum.
 
 Usage:
     python pipeline/05_publish.py <your-hf-username>/nutriweb-us-catalog
+    python pipeline/05_publish.py <your-hf-username>/nutriweb-us-catalog --private
+
+Repos are created public by default, which is what a Space on the free tier
+needs in order to download the catalog without a token. Pass --private to keep
+it unlisted; the Space will then need an HF_TOKEN secret to read it.
 """
 
 from __future__ import annotations
@@ -49,11 +54,13 @@ Rebuild with `pipeline/01_download.py` .. `pipeline/05_publish.py`.
 
 
 def main() -> None:
-    if len(sys.argv) < 2:
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    private = "--private" in sys.argv
+    if not args:
         raise SystemExit(
-            "Usage: python pipeline/05_publish.py <hf-username>/nutriweb-us-catalog"
+            "Usage: python pipeline/05_publish.py <hf-username>/nutriweb-us-catalog [--private]"
         )
-    repo_id = sys.argv[1]
+    repo_id = args[0]
 
     if not CATALOG_PATH.exists():
         raise SystemExit(f"{CATALOG_PATH} missing. Run steps 01-04 first.")
@@ -61,10 +68,22 @@ def main() -> None:
     from huggingface_hub import HfApi
 
     api = HfApi()
-    size_mb = CATALOG_PATH.stat().st_size / 1024**2
-    print(f"Publishing {CATALOG_PATH.name} ({size_mb:.0f} MB) to {repo_id} ...")
 
-    api.create_repo(repo_id, repo_type="dataset", exist_ok=True)
+    # Fail early with a clear message rather than a 403 midway through a
+    # 400 MB upload.
+    user = api.whoami().get("name")
+    owner = repo_id.split("/")[0]
+    if owner != user and owner not in {o.get("name") for o in api.whoami().get("orgs", [])}:
+        raise SystemExit(
+            f"You are logged in as '{user}', but the repo id starts with '{owner}'.\n"
+            f"Use '{user}/{repo_id.split('/')[-1]}' instead."
+        )
+
+    size_mb = CATALOG_PATH.stat().st_size / 1024**2
+    visibility = "private" if private else "public"
+    print(f"Publishing {CATALOG_PATH.name} ({size_mb:.0f} MB) to {repo_id} [{visibility}] ...")
+
+    api.create_repo(repo_id, repo_type="dataset", exist_ok=True, private=private)
     api.upload_file(
         path_or_fileobj=str(CATALOG_PATH),
         path_in_repo=CATALOG_PATH.name,
