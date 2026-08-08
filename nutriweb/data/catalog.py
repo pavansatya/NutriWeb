@@ -7,6 +7,7 @@ Face Hub at app startup. Everything here is read-only and query-time.
 from __future__ import annotations
 
 import os
+import threading
 from functools import lru_cache
 from pathlib import Path
 
@@ -52,8 +53,8 @@ def catalog_path() -> Path:
 
 
 @lru_cache(maxsize=1)
-def connect() -> duckdb.DuckDBPyConnection:
-    """Open the catalog read-only. Cached so we hold a single connection."""
+def _database() -> duckdb.DuckDBPyConnection:
+    """Open the catalog read-only, once per process."""
     path = catalog_path()
     if not path.exists():
         raise FileNotFoundError(
@@ -64,6 +65,25 @@ def connect() -> duckdb.DuckDBPyConnection:
         )
     con = duckdb.connect(str(path), read_only=True)
     con.execute("LOAD fts")
+    return con
+
+
+# Streamlit runs every user session on its own thread, and a DuckDB connection
+# is not safe to share across them: two threads interleaving execute() and
+# fetchdf() will consume each other's result sets, which surfaces as sporadic
+# None results rather than a clean error. Each thread therefore gets its own
+# cursor -- a lightweight handle onto the same open database, with its own
+# result set.
+_local = threading.local()
+
+
+def connect() -> duckdb.DuckDBPyConnection:
+    """Return this thread's cursor onto the catalog."""
+    con = getattr(_local, "con", None)
+    if con is None:
+        con = _database().cursor()
+        con.execute("LOAD fts")
+        _local.con = con
     return con
 
 
