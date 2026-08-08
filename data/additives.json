@@ -1,0 +1,1327 @@
+{
+ "en:e100": {
+  "concern": "watch",
+  "e_number": "100",
+  "name": "E100 - Curcumin",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e104": {
+  "concern": "watch",
+  "e_number": "104",
+  "name": "E104 - Quinoline yellow",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e110": {
+  "concern": "watch",
+  "e_number": "110",
+  "name": "E110 - Sunset yellow FCF",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e124": {
+  "concern": "watch",
+  "e_number": "124",
+  "name": "E124 - Ponceau 4r",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e129": {
+  "concern": "watch",
+  "e_number": "129",
+  "name": "E129 - Allura red",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e131": {
+  "concern": "moderate",
+  "e_number": "131",
+  "name": "E131 - Patent blue v",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: moderate risk of exceeding the acceptable daily intake"
+  ]
+ },
+ "en:e133": {
+  "concern": "moderate",
+  "e_number": "133",
+  "name": "E133 - Brilliant blue FCF",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: moderate risk of exceeding the acceptable daily intake"
+  ]
+ },
+ "en:e141": {
+  "concern": "watch",
+  "e_number": "141",
+  "name": "E141 - Copper complexes of chlorophylls and chlorophyllins",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e141i": {
+  "concern": "watch",
+  "e_number": "141",
+  "name": "E141i - Copper complexes of chlorophylls",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e141ii": {
+  "concern": "watch",
+  "e_number": "141",
+  "name": "E141ii - Copper complexes of chlorophyllins",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e142": {
+  "concern": "moderate",
+  "e_number": "142",
+  "name": "E142 - Green s",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: moderate risk of exceeding the acceptable daily intake"
+  ]
+ },
+ "en:e150a": {
+  "concern": "watch",
+  "e_number": "150a",
+  "name": "E150a - Plain caramel",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e150b": {
+  "concern": "watch",
+  "e_number": "150b",
+  "name": "E150b - Caustic sulphite caramel",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e150c": {
+  "concern": "moderate",
+  "e_number": "150c",
+  "name": "E150c - Ammonia caramel",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: moderate risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e150d": {
+  "concern": "watch",
+  "e_number": "150d",
+  "name": "E150d - Sulphite ammonia caramel",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e155": {
+  "concern": "high",
+  "e_number": "155",
+  "name": "E155 - Brown ht",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake"
+  ]
+ },
+ "en:e160ai": {
+  "concern": "watch",
+  "e_number": "160a",
+  "name": "E160ai - Beta-carotene",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e160aii": {
+  "concern": "watch",
+  "e_number": "160a",
+  "name": "E160aii - Plant carotenes",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e160b": {
+  "concern": "watch",
+  "e_number": "160b",
+  "name": "E160b - Annatto",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e160e": {
+  "concern": "watch",
+  "e_number": "160e",
+  "name": "E160e - Beta-apo-8\u2032-carotenal (c30)",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e160f": {
+  "concern": "watch",
+  "e_number": "160f",
+  "name": "E160f - Ethyl ester of beta-apo-8'-carotenic acid (C 30)",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e161b": {
+  "concern": "watch",
+  "e_number": "161b",
+  "name": "E161b - Lutein",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e170": {
+  "concern": "watch",
+  "e_number": null,
+  "name": "E170 - Calcium carbonates",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e171": {
+  "concern": "watch",
+  "e_number": "171",
+  "name": "E171 - Titanium dioxide",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e172": {
+  "concern": "watch",
+  "e_number": "172",
+  "name": "E172 - Iron oxides and iron hydroxides",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e174": {
+  "concern": "watch",
+  "e_number": "174",
+  "name": "E174 - Silver",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e180": {
+  "concern": "watch",
+  "e_number": "180",
+  "name": "E180 - Litholrubine bk",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e200": {
+  "concern": "high",
+  "e_number": "200",
+  "name": "E200 - Sorbic acid",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake"
+  ]
+ },
+ "en:e202": {
+  "concern": "high",
+  "e_number": "202",
+  "name": "E202 - Potassium sorbate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake"
+  ]
+ },
+ "en:e210": {
+  "concern": "high",
+  "e_number": "210",
+  "name": "E210 - Benzoic acid",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e211": {
+  "concern": "high",
+  "e_number": "211",
+  "name": "E211 - Sodium benzoate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e212": {
+  "concern": "high",
+  "e_number": "212",
+  "name": "E212 - Potassium benzoate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e213": {
+  "concern": "high",
+  "e_number": "213",
+  "name": "E213 - Calcium benzoate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e220": {
+  "concern": "high",
+  "e_number": "220",
+  "name": "E220 - Sulphur dioxide",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e221": {
+  "concern": "high",
+  "e_number": "221",
+  "name": "E221 - Sodium sulphite",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e222": {
+  "concern": "high",
+  "e_number": "222",
+  "name": "E222 - Sodium bisulphite",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e223": {
+  "concern": "high",
+  "e_number": "223",
+  "name": "E223 - Sodium metabisulphite",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e224": {
+  "concern": "high",
+  "e_number": "224",
+  "name": "E224 - Potassium metabisulphite",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e225": {
+  "concern": "watch",
+  "e_number": "225",
+  "name": "E225 - Calcium Disulphite",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e226": {
+  "concern": "high",
+  "e_number": "226",
+  "name": "E226 - Calcium sulphite",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e227": {
+  "concern": "high",
+  "e_number": "227",
+  "name": "E227 - Calcium bisulphite",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e228": {
+  "concern": "high",
+  "e_number": "228",
+  "name": "E228 - Potassium bisulphite",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e243": {
+  "concern": "watch",
+  "e_number": "243",
+  "name": "E243 - Ethyl lauroyl arginate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e249": {
+  "concern": "watch",
+  "e_number": "249",
+  "name": "E249 - Potassium nitrite",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e250": {
+  "concern": "high",
+  "e_number": "250",
+  "name": "E250 - Sodium nitrite",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e251": {
+  "concern": "high",
+  "e_number": "251",
+  "name": "E251 - Sodium nitrate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake"
+  ]
+ },
+ "en:e252": {
+  "concern": "high",
+  "e_number": "252",
+  "name": "E252 - Potassium nitrate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake"
+  ]
+ },
+ "en:e321": {
+  "concern": "watch",
+  "e_number": "321",
+  "name": "E321 - Butylated hydroxytoluene",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e334": {
+  "concern": "watch",
+  "e_number": "334",
+  "name": "E334 - L(+)-tartaric acid",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e335": {
+  "concern": "watch",
+  "e_number": "335",
+  "name": "E335 - Sodium tartrates",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e335i": {
+  "concern": "watch",
+  "e_number": "335",
+  "name": "E335i - Monosodium tartrate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e335ii": {
+  "concern": "watch",
+  "e_number": "335",
+  "name": "E335ii - Disodium tartrate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e336": {
+  "concern": "watch",
+  "e_number": "336",
+  "name": "E336 - Potassium tartrates",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e336i": {
+  "concern": "watch",
+  "e_number": "336",
+  "name": "E336i - Monopotassium tartrate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e336ii": {
+  "concern": "watch",
+  "e_number": "336",
+  "name": "E336ii - Dipotassium tartrate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e337": {
+  "concern": "watch",
+  "e_number": "337",
+  "name": "E337 - Potassium sodium tartrate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e338": {
+  "concern": "high",
+  "e_number": "338",
+  "name": "E338 - Phosphoric acid",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e339": {
+  "concern": "high",
+  "e_number": "339",
+  "name": "E339 - Sodium phosphates",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e339i": {
+  "concern": "watch",
+  "e_number": "339",
+  "name": "E339i - Monosodium phosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e339ii": {
+  "concern": "watch",
+  "e_number": "339",
+  "name": "E339ii - Disodium phosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e339iii": {
+  "concern": "watch",
+  "e_number": "339",
+  "name": "E339iii - Trisodium phosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e340": {
+  "concern": "high",
+  "e_number": "340",
+  "name": "E340 - Potassium phosphates",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e340i": {
+  "concern": "watch",
+  "e_number": "340",
+  "name": "E340i - Monopotassium phosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e340ii": {
+  "concern": "watch",
+  "e_number": "340",
+  "name": "E340ii - Dipotassium phosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e340iii": {
+  "concern": "watch",
+  "e_number": "340",
+  "name": "E340iii - Tripotassium phosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e341": {
+  "concern": "high",
+  "e_number": "341",
+  "name": "E341 - Calcium phosphates",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e341i": {
+  "concern": "watch",
+  "e_number": "341",
+  "name": "E341i - Monocalcium phosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e341ii": {
+  "concern": "watch",
+  "e_number": "341",
+  "name": "E341ii - Dicalcium phosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e341iii": {
+  "concern": "watch",
+  "e_number": "341",
+  "name": "E341iii - Tricalcium phosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e343": {
+  "concern": "high",
+  "e_number": "343",
+  "name": "E343 - Magnesium phosphates",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e343i": {
+  "concern": "watch",
+  "e_number": "343",
+  "name": "E343i - Monomagnesium phosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e343ii": {
+  "concern": "watch",
+  "e_number": "343",
+  "name": "E343ii - Dimagnesium phosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e354": {
+  "concern": "watch",
+  "e_number": "354",
+  "name": "E354 - Calcium tartrate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e407": {
+  "concern": "high",
+  "e_number": "407",
+  "name": "E407 - Carrageenan",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e407a": {
+  "concern": "high",
+  "e_number": "407a",
+  "name": "E407a - Processed eucheuma seaweed",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake"
+  ]
+ },
+ "en:e432": {
+  "concern": "moderate",
+  "e_number": "432",
+  "name": "E432 - Polyoxyethylene sorbitan monolaurate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: moderate risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e433": {
+  "concern": "moderate",
+  "e_number": "433",
+  "name": "E433 - Polyoxyethylene sorbitan monooleate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: moderate risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e434": {
+  "concern": "moderate",
+  "e_number": "434",
+  "name": "E434 - Polyoxyethylene sorbitan monopalmitate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: moderate risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e435": {
+  "concern": "moderate",
+  "e_number": "435",
+  "name": "E435 - Polyoxyethylene sorbitan monostearate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: moderate risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e436": {
+  "concern": "moderate",
+  "e_number": "436",
+  "name": "E436 - Polyoxyethylene sorbitan tristearate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: moderate risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e450": {
+  "concern": "high",
+  "e_number": "450",
+  "name": "E450 - Diphosphates",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e450i": {
+  "concern": "watch",
+  "e_number": "450",
+  "name": "E450i - Disodium diphosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e450ii": {
+  "concern": "watch",
+  "e_number": "450",
+  "name": "E450ii - Trisodium diphosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e450iii": {
+  "concern": "watch",
+  "e_number": "450",
+  "name": "E450iii - Tetrasodium diphosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e450v": {
+  "concern": "watch",
+  "e_number": "450",
+  "name": "E450v - Tetrapotassium diphosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e450vi": {
+  "concern": "watch",
+  "e_number": "450",
+  "name": "E450vi - Dicalcium diphosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e450vii": {
+  "concern": "watch",
+  "e_number": "450",
+  "name": "E450vii - Calcium dihydrogen diphosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e451": {
+  "concern": "high",
+  "e_number": "451",
+  "name": "E451 - Triphosphates",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e451i": {
+  "concern": "watch",
+  "e_number": "451",
+  "name": "E451i - Pentasodium triphosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e451ii": {
+  "concern": "watch",
+  "e_number": "451",
+  "name": "E451ii - Pentapotassium triphosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e452": {
+  "concern": "high",
+  "e_number": "452",
+  "name": "E452 - Polyphosphates",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e452i": {
+  "concern": "watch",
+  "e_number": "452",
+  "name": "E452i - Sodium polyphosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e452ii": {
+  "concern": "watch",
+  "e_number": "452",
+  "name": "E452ii - Potassium polyphosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e452iii": {
+  "concern": "watch",
+  "e_number": "452",
+  "name": "E452iii - Sodium calcium polyphosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e452iv": {
+  "concern": "watch",
+  "e_number": "452",
+  "name": "E452iv - Calcium polyphosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e459": {
+  "concern": "high",
+  "e_number": "459",
+  "name": "E459 - Beta-cyclodextrine",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake"
+  ]
+ },
+ "en:e460i": {
+  "concern": "watch",
+  "e_number": "460",
+  "name": "E460i - Microcrystalline cellulose",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e472e": {
+  "concern": "watch",
+  "e_number": "472e",
+  "name": "E472e - Mono- and diacetyltartaric acid esters of mono- and diglycerides of fatty acids",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e473": {
+  "concern": "high",
+  "e_number": "473",
+  "name": "E473 - Sucrose esters of fatty acids",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e474": {
+  "concern": "watch",
+  "e_number": "474",
+  "name": "E474 - Sucroglycerides",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e475": {
+  "concern": "watch",
+  "e_number": "475",
+  "name": "E475 - Polyglycerol esters of fatty acids",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e481": {
+  "concern": "high",
+  "e_number": "481",
+  "name": "E481 - Sodium stearoyl-2-lactylate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e482": {
+  "concern": "high",
+  "e_number": "482",
+  "name": "E482 - Calcium stearoyl-2-lactylate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e483": {
+  "concern": "watch",
+  "e_number": "483",
+  "name": "E483 - Stearyl tartrate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e491": {
+  "concern": "high",
+  "e_number": "491",
+  "name": "E491 - Sorbitan monostearate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e492": {
+  "concern": "high",
+  "e_number": "492",
+  "name": "E492 - Sorbitan tristearate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e493": {
+  "concern": "high",
+  "e_number": "493",
+  "name": "E493 - Sorbitan monolaurate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e494": {
+  "concern": "high",
+  "e_number": "494",
+  "name": "E494 - Sorbitan monooleate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e495": {
+  "concern": "high",
+  "e_number": "495",
+  "name": "E495 - Sorbitan monopalmitate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e507": {
+  "concern": "moderate",
+  "e_number": "507",
+  "name": "E507 - Hydrochloric acid",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: moderate risk of exceeding the acceptable daily intake"
+  ]
+ },
+ "en:e508": {
+  "concern": "moderate",
+  "e_number": "508",
+  "name": "E508 - Potassium chloride",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: moderate risk of exceeding the acceptable daily intake"
+  ]
+ },
+ "en:e509": {
+  "concern": "moderate",
+  "e_number": "509",
+  "name": "E509 - Calcium chloride",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: moderate risk of exceeding the acceptable daily intake"
+  ]
+ },
+ "en:e511": {
+  "concern": "moderate",
+  "e_number": "511",
+  "name": "E511 - Magnesium chloride",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: moderate risk of exceeding the acceptable daily intake"
+  ]
+ },
+ "en:e520": {
+  "concern": "watch",
+  "e_number": "520",
+  "name": "E520 - Aluminium sulphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e521": {
+  "concern": "watch",
+  "e_number": "521",
+  "name": "E521 - Aluminium sodium sulphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e522": {
+  "concern": "watch",
+  "e_number": "522",
+  "name": "E522 - Aluminium potassium sulphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e523": {
+  "concern": "watch",
+  "e_number": "523",
+  "name": "E523 - Aluminium ammonium sulphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e535": {
+  "concern": "watch",
+  "e_number": "535",
+  "name": "E535 - Sodium ferrocyanide",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e536": {
+  "concern": "watch",
+  "e_number": "536",
+  "name": "E536 - Potassium ferrocyanide",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e538": {
+  "concern": "watch",
+  "e_number": "538",
+  "name": "E538 - Calcium ferrocyanide",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e541": {
+  "concern": "watch",
+  "e_number": "541",
+  "name": "E541 - Sodium aluminium phosphate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e551": {
+  "concern": "watch",
+  "e_number": "551",
+  "name": "E551 - Silicon dioxide",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e554": {
+  "concern": "watch",
+  "e_number": "554",
+  "name": "E554 - Sodium aluminium silicate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e555": {
+  "concern": "watch",
+  "e_number": "555",
+  "name": "E555 - Potassium aluminium silicate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e556": {
+  "concern": "watch",
+  "e_number": "556",
+  "name": "E556 - Calcium aluminium silicate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e558": {
+  "concern": "watch",
+  "e_number": "558",
+  "name": "E558 - Bentonite",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e559": {
+  "concern": "watch",
+  "e_number": "559",
+  "name": "E559 - Aluminium silicate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e620": {
+  "concern": "watch",
+  "e_number": "620",
+  "name": "E620 - Glutamic acid",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e621": {
+  "concern": "high",
+  "e_number": "621",
+  "name": "E621 - Monosodium glutamate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "EFSA: high risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e622": {
+  "concern": "watch",
+  "e_number": "622",
+  "name": "E622 - Monopotassium glutamate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e623": {
+  "concern": "watch",
+  "e_number": "623",
+  "name": "E623 - Calcium diglutamate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e624": {
+  "concern": "watch",
+  "e_number": "624",
+  "name": "E624 - Monoammonium glutamate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e625": {
+  "concern": "watch",
+  "e_number": "625",
+  "name": "E625 - Magnesium diglutamate",
+  "non_nutritive_sweetener": false,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e950": {
+  "concern": "watch",
+  "e_number": "950",
+  "name": "E950 - Acesulfame k",
+  "non_nutritive_sweetener": true,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e951": {
+  "concern": "none",
+  "e_number": "951",
+  "name": "E951 - Aspartame",
+  "non_nutritive_sweetener": true,
+  "reasons": []
+ },
+ "en:e952": {
+  "concern": "none",
+  "e_number": "952",
+  "name": "E952 - Cyclamic acid and its Na and Ca salts",
+  "non_nutritive_sweetener": true,
+  "reasons": []
+ },
+ "en:e954": {
+  "concern": "none",
+  "e_number": "954",
+  "name": "E954 - saccharin and its salts",
+  "non_nutritive_sweetener": true,
+  "reasons": []
+ },
+ "en:e955": {
+  "concern": "watch",
+  "e_number": "955",
+  "name": "E955 - Sucralose",
+  "non_nutritive_sweetener": true,
+  "reasons": [
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e957": {
+  "concern": "none",
+  "e_number": "957",
+  "name": "E957 - Thaumatin",
+  "non_nutritive_sweetener": true,
+  "reasons": []
+ },
+ "en:e959": {
+  "concern": "none",
+  "e_number": "959",
+  "name": "E959 - Neohesperidine dihydrochalcone",
+  "non_nutritive_sweetener": true,
+  "reasons": []
+ },
+ "en:e960": {
+  "concern": "moderate",
+  "e_number": "960",
+  "name": "E960 - Steviol glycosides",
+  "non_nutritive_sweetener": true,
+  "reasons": [
+   "EFSA: moderate risk of exceeding the acceptable daily intake",
+   "On ANSES' list of additives of interest"
+  ]
+ },
+ "en:e960a": {
+  "concern": "none",
+  "e_number": "960a",
+  "name": "E960a - Steviol glycosides from Stevia",
+  "non_nutritive_sweetener": true,
+  "reasons": []
+ },
+ "en:e961": {
+  "concern": "none",
+  "e_number": "961",
+  "name": "E961 - Neotame",
+  "non_nutritive_sweetener": true,
+  "reasons": []
+ },
+ "en:e962": {
+  "concern": "none",
+  "e_number": "962",
+  "name": "E962 - Salt of aspartame-acesulfame",
+  "non_nutritive_sweetener": true,
+  "reasons": []
+ },
+ "en:e969": {
+  "concern": "none",
+  "e_number": "969",
+  "name": "E969 - Advantame",
+  "non_nutritive_sweetener": true,
+  "reasons": []
+ }
+}

@@ -1,53 +1,61 @@
-# app.py
-from flask import Flask, render_template, request
-import pandas as pd
-from nutriweb.assess_risk import assess_product_risks, classify_product
-from nutriweb.recommendations import load_products, get_product_by_name, find_alternatives
+"""NutriWeb — entry point.
 
-app = Flask(__name__)
+Replaces the previous single 450-line script that routed pages by mutating
+`st.session_state.page` and calling `st.stop()` at the end of each branch. This
+uses Streamlit's own navigation, so the browser URL, the back button and the
+sidebar all behave normally.
+"""
 
-# Load the full product dataset once at startup
-products_df = load_products(sample_size=10000)  # adjust sample_size as needed
+from __future__ import annotations
 
-@app.route('/', methods=['GET'])
-def index():
-    return render_template('index.html')
+import sys
+from pathlib import Path
 
-@app.route('/recommendations', methods=['POST'])
-def recommendations_page():
-    product_query = request.form.get('product_name', '').strip()
-    if not product_query:
-        return render_template('recommendations.html', error="Please enter a product name.", product=None, alternatives=None)
-    
-    # Look up the product by name
-    target_product = get_product_by_name(product_query, products_df)
-    if target_product is None:
-        return render_template('recommendations.html', error=f"No product found matching '{product_query}'.", product=None, alternatives=None)
-    
-    # Classify the target product based on ingredients and additives
-    classification, ing_risks, add_risks = classify_product(target_product.get('ingredients', ''), target_product.get('additives_en', ''))
-    
-    # Assess detailed risks (for warning)
-    risk_details = assess_product_risks(target_product.get('ingredients', ''), target_product.get('additives_en', ''))
-    
-    # Find alternatives using reverse-hierarchy category search
-    alternatives = find_alternatives(target_product, products_df)
-    
-    # Prepare product details for display
-    product_details = {
-        "product_name": target_product.get('product_name'),
-        "brands": target_product.get('brands'),
-        "category_level_1": target_product.get('category_level_1'),
-        "classification": classification,
-        "ingredients": ing_risks,
-        "additives": add_risks,
-        "risk_warning": risk_details.get("warning")
-    }
-    
-    return render_template('recommendations.html',
-                           product=product_details,
-                           alternatives=alternatives,
-                           error=None)
+import streamlit as st
 
-if __name__ == '__main__':
-    app.run(debug=True)
+REPO_ROOT = Path(__file__).resolve().parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+st.set_page_config(
+    page_title="NutriWeb",
+    page_icon="🥗",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+
+@st.cache_resource
+def _styles() -> str:
+    return (REPO_ROOT / "styles.css").read_text()
+
+
+st.markdown(f"<style>{_styles()}</style>", unsafe_allow_html=True)
+
+from nutriweb.profile.model import UserProfile  # noqa: E402
+from views import state  # noqa: E402
+
+state.init()
+
+pages = [
+    st.Page("views/search.py", title="Search", icon=":material/search:", default=True),
+    st.Page("views/product.py", title="Product", icon=":material/nutrition:"),
+    st.Page("views/recommend.py", title="Healthier swaps", icon=":material/swap_horiz:"),
+    st.Page("views/compare.py", title="Compare", icon=":material/compare_arrows:"),
+    st.Page("views/profile_page.py", title="My profile", icon=":material/person:"),
+    st.Page("views/insights.py", title="Data insights", icon=":material/insights:"),
+]
+
+with st.sidebar:
+    st.markdown("### 🥗 NutriWeb")
+    st.caption("Personalised food choices, from the full Open Food Facts US catalog.")
+    profile: UserProfile = st.session_state.profile
+    if profile.user_id:
+        st.success(f"Signed in as **{profile.user_id}**")
+        if st.button("Sign out", use_container_width=True):
+            state.sign_out()
+            st.rerun()
+    else:
+        st.info("Browsing as a guest. Set a profile to get personalised results.")
+
+st.navigation(pages).run()

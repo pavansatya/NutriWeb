@@ -1,4 +1,13 @@
 [server]
 headless = true
-enableCORS = true
 
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "light"
+primaryColor = "#0F8A5F"
+backgroundColor = "#FBFBF9"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#1A1F1C"
+font = "sans serif"

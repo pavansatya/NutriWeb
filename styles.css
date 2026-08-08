@@ -1,0 +1,143 @@
+/* NutriWeb — injected once by app.py.
+   Kept in a real .css file rather than scattered st.markdown calls so the
+   design is editable in one place. */
+
+:root {
+  --nw-green: #0F8A5F;
+  --nw-green-dark: #0A6244;
+  --nw-ink: #1A1F1C;
+  --nw-muted: #5F6B64;
+  --nw-line: #E3E8E4;
+  --nw-surface: #FFFFFF;
+  --nw-bg: #FBFBF9;
+
+  /* Official Nutri-Score palette */
+  --ns-a: #038141;
+  --ns-b: #85BB2F;
+  --ns-c: #FECB02;
+  --ns-d: #EE8100;
+  --ns-e: #E63E11;
+
+  --nw-radius: 14px;
+  --nw-shadow: 0 1px 2px rgba(16, 32, 24, .06), 0 4px 16px rgba(16, 32, 24, .05);
+}
+
+/* ---------- layout ---------- */
+.block-container { padding-top: 2.2rem; max-width: 1180px; }
+
+/* ---------- hero ---------- */
+.nw-hero {
+  background: linear-gradient(135deg, var(--nw-green-dark), var(--nw-green) 55%, #3DAF7D);
+  color: #fff;
+  border-radius: var(--nw-radius);
+  padding: 1.6rem 1.8rem;
+  margin-bottom: 1.4rem;
+}
+.nw-hero h1 { margin: 0 0 .3rem; font-size: 1.7rem; font-weight: 700; letter-spacing: -.02em; }
+.nw-hero p  { margin: 0; opacity: .92; font-size: .95rem; }
+
+/* ---------- cards ---------- */
+.nw-card {
+  background: var(--nw-surface);
+  border: 1px solid var(--nw-line);
+  border-radius: var(--nw-radius);
+  padding: 1rem 1.1rem;
+  box-shadow: var(--nw-shadow);
+  height: 100%;
+}
+.nw-card h4 { margin: 0 0 .2rem; font-size: 1rem; line-height: 1.32; color: var(--nw-ink); }
+.nw-brand { color: var(--nw-muted); font-size: .8rem; margin-bottom: .55rem; }
+
+.nw-thumb {
+  width: 100%; height: 132px; object-fit: contain;
+  background: #F4F6F4; border-radius: 10px; margin-bottom: .7rem;
+}
+.nw-thumb-empty {
+  display: flex; align-items: center; justify-content: center;
+  color: #B6C0B9; font-size: 1.9rem;
+}
+
+/* ---------- score badges ---------- */
+.nw-badges { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; }
+.nw-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  border-radius: 999px; padding: .2rem .6rem;
+  font-size: .74rem; font-weight: 650; letter-spacing: .01em;
+  border: 1px solid transparent; white-space: nowrap;
+}
+.nw-badge .k { opacity: .75; font-weight: 500; }
+.ns-a { background: var(--ns-a); color: #fff; }
+.ns-b { background: var(--ns-b); color: #14310A; }
+.ns-c { background: var(--ns-c); color: #3A2E00; }
+.ns-d { background: var(--ns-d); color: #fff; }
+.ns-e { background: var(--ns-e); color: #fff; }
+.nw-badge-neutral { background: #EEF2EF; color: var(--nw-muted); border-color: var(--nw-line); }
+
+/* Provenance chip: whether a grade came from OFF or was computed here. */
+.nw-source {
+  font-size: .68rem; color: var(--nw-muted);
+  background: #F2F5F3; border: 1px solid var(--nw-line);
+  border-radius: 6px; padding: .1rem .4rem; margin-left: .3rem;
+}
+
+/* ---------- health score dial ---------- */
+.nw-health { display: flex; align-items: baseline; gap: .4rem; margin: .55rem 0 .3rem; }
+.nw-health .v { font-size: 1.5rem; font-weight: 700; color: var(--nw-ink); line-height: 1; }
+.nw-health .m { font-size: .74rem; color: var(--nw-muted); }
+.nw-meter { height: 6px; background: #EDF1EE; border-radius: 999px; overflow: hidden; }
+.nw-meter > span { display: block; height: 100%; border-radius: 999px; }
+
+/* ---------- gain pill on recommendations ---------- */
+.nw-gain {
+  display: inline-block; background: #E7F5EE; color: var(--nw-green-dark);
+  border: 1px solid #BFE5D3; border-radius: 999px;
+  padding: .16rem .55rem; font-size: .76rem; font-weight: 650;
+}
+.nw-why { color: var(--nw-muted); font-size: .78rem; margin-top: .45rem; line-height: 1.45; }
+
+/* ---------- verdict panel ---------- */
+.nw-verdict { border-radius: var(--nw-radius); padding: .85rem 1rem; margin: .2rem 0 1rem; border: 1px solid; }
+.nw-verdict h5 { margin: 0 0 .3rem; font-size: .95rem; }
+.nw-verdict ul { margin: .3rem 0 0; padding-left: 1.1rem; font-size: .85rem; }
+.v-ok    { background: #EAF7F0; border-color: #BFE5D3; color: #0A5A3C; }
+.v-warn  { background: #FFF7E6; border-color: #FBE0A2; color: #6B4C00; }
+.v-block { background: #FDECEA; border-color: #F6C7C0; color: #8A1F12; }
+
+/* ---------- chips ---------- */
+.nw-chips { display: flex; flex-wrap: wrap; gap: .3rem; }
+.nw-chip {
+  font-size: .75rem; padding: .18rem .55rem; border-radius: 999px;
+  background: #F2F5F3; border: 1px solid var(--nw-line); color: var(--nw-ink);
+}
+.chip-danger { background: #FDECEA; border-color: #F6C7C0; color: #8A1F12; }
+.chip-warn   { background: #FFF7E6; border-color: #FBE0A2; color: #6B4C00; }
+.chip-good   { background: #EAF7F0; border-color: #BFE5D3; color: #0A5A3C; }
+
+/* ---------- nutrient table ---------- */
+.nw-nutri { width: 100%; border-collapse: collapse; font-size: .86rem; }
+.nw-nutri td { padding: .42rem .2rem; border-bottom: 1px solid var(--nw-line); vertical-align: middle; }
+.nw-nutri td.n { color: var(--nw-muted); width: 34%; }
+.nw-nutri td.v { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; width: 18%; }
+.nw-bar { background: #EDF1EE; border-radius: 999px; height: 6px; }
+.nw-bar > span { display: block; height: 100%; border-radius: 999px; background: var(--nw-green); }
+.nw-bar > span.over { background: var(--ns-d); }
+
+.nw-sub { color: var(--nw-muted); font-size: .82rem; }
+
+/* ---------- dark mode ---------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --nw-ink: #E9EFEB; --nw-muted: #9FAFA6;
+    --nw-line: #2A332E; --nw-surface: #161B18; --nw-bg: #0F1411;
+  }
+  .nw-thumb { background: #1D2320; }
+  .nw-meter, .nw-bar { background: #262E29; }
+  .nw-chip, .nw-source { background: #1D2320; }
+  .v-ok    { background: #10241B; border-color: #1F4634; color: #8FD9B6; }
+  .v-warn  { background: #2A2312; border-color: #4A3D1A; color: #E8C874; }
+  .v-block { background: #2B1512; border-color: #55251E; color: #F0A79B; }
+  .nw-gain { background: #10241B; border-color: #1F4634; color: #8FD9B6; }
+  .chip-danger { background: #2B1512; border-color: #55251E; color: #F0A79B; }
+  .chip-warn   { background: #2A2312; border-color: #4A3D1A; color: #E8C874; }
+  .chip-good   { background: #10241B; border-color: #1F4634; color: #8FD9B6; }
+}

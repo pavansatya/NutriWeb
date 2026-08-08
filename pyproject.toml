@@ -1,33 +1,32 @@
-[tool.poetry]
+[project]
 name = "nutriweb"
-version = "0.1.0"
-description = "A personalized product recommendation system."
-authors = ["Thanvitha <m.thanvitha@gmail.com>"]
-readme = "readme.md"
+version = "2.0.0"
+description = "Personalised, evidence-backed food recommendations from the Open Food Facts US catalog."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "AGPL-3.0" }
 
-[tool.poetry.dependencies]
-python = ">=3.9.8,<4.0"
-pandas = "^1.5.3"
-numpy = "^1.23.5"
-flask = "^3.1.0"
-streamlit = "^1.43.2"
-sentence-transformers = "^4.0.2"
-faiss-cpu = "^1.10.0"
-gdown = "^5.2.0"
-plotly = "^6.0.1"
-huggingface-hub = "^0.30.2"
-pymongo = "^4.12.1"
-certifi = "^2025.4.26"
+dependencies = [
+    "streamlit>=1.40",
+    "duckdb>=1.1",
+    "pandas>=2.2",
+    "numpy>=2.0",
+    "plotly>=6.0",
+    "huggingface_hub>=0.30",
+    "pymongo>=4.12",
+    "passlib[bcrypt]>=1.7",
+]
 
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "hf_transfer"]
 
-[tool.poetry.dev-dependencies]
-pytest = "^7.2.0"
-
-# Use double square brackets for an array of tables.
-[[tool.poetry.packages]]
-include = "nutriweb"
-from = "."
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["nutriweb", "pipeline", "views", "components"]

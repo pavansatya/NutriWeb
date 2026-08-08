@@ -1,12 +1,19 @@
-# Ignore useful_data folder
-useful_data/
+# Built catalog artifacts — rebuild with pipeline/, or pull from the Hub
+data/*.duckdb
+data/*.duckdb.wal
+data/*.parquet
 
-# Ignore the my_embeddings folder
-my_embeddings/
+# Secrets — never commit. Set via HF Space "Repository secrets".
+.streamlit/secrets.toml
+.env
 
-# Optionally, ignore virtual environment directories
+# Python
+__pycache__/
+*.py[cod]
 .venv/
 env/
+.pytest_cache/
+*.egg-info/
 
-# Secrets — never commit, set via Space "Repository secrets" instead
-.streamlit/secrets.toml
+# macOS
+.DS_Store
