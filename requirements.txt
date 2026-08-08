@@ -5,7 +5,12 @@
 # Open Food Facts already canonicalises ingredients into tags, so set overlap
 # replaces that entirely. See nutriweb/reco/similarity.py.
 
-streamlit>=1.40
+# Pinned, and kept identical to `sdk_version` in README.md -- Hugging Face
+# Spaces installs the version declared there, not this one. When the two
+# drifted (1.40 on the Space, 1.61 locally) the app crashed on st.button(width=),
+# an argument that only exists in the newer release. tests/test_deploy.py
+# fails if they diverge again.
+streamlit==1.61.1
 duckdb>=1.1
 pandas>=2.2
 numpy>=2.0
