@@ -28,6 +28,11 @@ def _stats() -> dict:
     return catalog.stats()
 
 
+def _use_example(example: str) -> None:
+    """Fill the search box from an example chip."""
+    st.session_state.search_box = example
+
+
 query = st.text_input(
     "Search",
     placeholder="e.g. peanut butter, greek yogurt, or a barcode like 0049000028911",
@@ -45,9 +50,17 @@ if not query:
     examples = ["greek yogurt", "peanut butter", "granola bar", "tortilla chips", "sparkling water"]
     columns = st.columns(len(examples))
     for column, example in zip(columns, examples):
-        if column.button(example, width='stretch', key=f"eg_{example}"):
-            st.session_state.search_box = example
-            st.rerun()
+        # Seeding must happen in an on_click callback, not in the button's
+        # if-branch: Streamlit refuses assignment to a widget's key once that
+        # widget has been instantiated this run, and search_box is created
+        # above. Callbacks run before the rerun, so the assignment is legal.
+        column.button(
+            example,
+            width="stretch",
+            key=f"eg_{example}",
+            on_click=_use_example,
+            args=(example,),
+        )
     st.stop()
 
 with st.spinner("Searching..."):
