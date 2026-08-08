@@ -12,4 +12,4 @@ numpy>=2.0
 plotly>=6.0
 huggingface_hub>=0.30
 pymongo>=4.12          # optional: account storage, app runs without it
-passlib[bcrypt]>=1.7   # password hashing
+bcrypt>=4.0            # password hashing (passlib is unmaintained and breaks on bcrypt 5)

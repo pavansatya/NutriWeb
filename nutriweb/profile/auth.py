@@ -16,12 +16,23 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 
+import bcrypt
 import streamlit as st
-from passlib.context import CryptContext
 
 from nutriweb.profile.model import UserProfile
 
-_pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# bcrypt hashes at most 72 bytes and raises on anything longer (it used to
+# truncate silently). Truncating here is the standard handling and keeps long
+# passphrases usable.
+BCRYPT_MAX_BYTES = 72
+
+
+def _encode(password: str) -> bytes:
+    return (password or "").encode("utf-8")[:BCRYPT_MAX_BYTES]
+
+
+def _hash(password: str) -> str:
+    return bcrypt.hashpw(_encode(password), bcrypt.gensalt()).decode()
 
 
 @dataclass
@@ -32,13 +43,23 @@ class AuthResult:
 
 
 def _uri() -> str:
-    """Read the connection string from Space secrets or the environment."""
+    """Read the connection string, environment first.
+
+    Order matters. Hugging Face Space secrets arrive as environment variables,
+    and a stale `.streamlit/secrets.toml` left in the working tree must never
+    be able to override an explicitly-set variable -- reading the file first
+    silently redirected connections to an old cluster, which is exactly the
+    kind of failure that is invisible until it matters.
+    """
+    from_env = os.environ.get("MONGODB_URI", "").strip()
+    if from_env:
+        return from_env
     try:
         if "MONGODB_URI" in st.secrets:
             return str(st.secrets["MONGODB_URI"])
     except Exception:
-        pass  # no secrets.toml at all is a normal local state
-    return os.environ.get("MONGODB_URI", "")
+        pass  # no secrets.toml at all is the normal local state
+    return ""
 
 
 @st.cache_resource(show_spinner=False)
@@ -67,13 +88,13 @@ def _collections():
 def _verify(password: str, hashed: str) -> bool:
     """Check a password without raising on a missing or malformed hash.
 
-    passlib raises on an empty or unrecognised hash string, which would turn a
-    corrupted record into a 500 rather than a failed login.
+    bcrypt raises on an empty or unrecognised hash string, which would turn a
+    corrupted record into a crash rather than a failed login.
     """
     if not hashed:
         return False
     try:
-        return _pwd.verify(password, hashed)
+        return bcrypt.checkpw(_encode(password), hashed.encode("utf-8"))
     except (ValueError, TypeError):
         return False
 
@@ -94,7 +115,7 @@ def register(user_id: str, password: str, profile: UserProfile) -> AuthResult:
     if len(password) < 8:
         return AuthResult(False, "Use at least 8 characters for the password.")
 
-    record = {"_id": user_id, "password_hash": _pwd.hash(password), **profile.to_dict()}
+    record = {"_id": user_id, "password_hash": _hash(password), **profile.to_dict()}
     users, _ = _collections()
 
     if users is None:
