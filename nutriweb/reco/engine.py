@@ -161,14 +161,56 @@ def recommend(
 
     basis["pool"] = len(frame)
     if frame.empty:
-        basis["message"] = (
-            "No healthier alternative passed your allergen and diet filters."
-        )
+        basis.update(_diagnose_empty(product, source_health, category))
         return [], basis
 
     ranked = _rank(product, frame, source_health, profile, top_n)
     basis["returned"] = len(ranked)
     return ranked, basis
+
+
+def _diagnose_empty(product: dict, source_health: float, category: str | None) -> dict:
+    """Work out *why* there are no results, so the UI can say something true.
+
+    An empty pool has three quite different causes, and telling a user their
+    filters were too strict when the real answer is "this is already the best
+    product in its category" is simply wrong.
+    """
+    if category is None:
+        return {
+            "reason": "no_candidates",
+            "message": "We couldn't find comparable products to rank this against.",
+        }
+
+    # Is anything in this category healthier at all, ignoring the profile?
+    unfiltered = catalog.connect().execute(
+        """SELECT count(*) FROM catalog
+           WHERE list_contains(categories_tags, ?) AND code <> ?
+             AND health_score IS NOT NULL AND health_score > ?""",
+        [category, product["code"], source_health],
+    ).fetchone()[0]
+
+    if unfiltered == 0:
+        label = str(category).split(":", 1)[-1].replace("-", " ")
+        return {
+            "reason": "already_best",
+            "message": (
+                f"Nothing in {label} scores higher — this is already among the "
+                f"healthiest options we have ({source_health:.0f}/100)."
+            ),
+        }
+
+    return {
+        "reason": "filtered_out",
+        "filtered_out": unfiltered,
+        "message": (
+            f"{unfiltered} healthier option exists, but it did not pass your "
+            f"allergen and diet filters."
+            if unfiltered == 1
+            else f"{unfiltered} healthier options exist, but none passed your "
+                 f"allergen and diet filters."
+        ),
+    }
 
 
 def _rank(

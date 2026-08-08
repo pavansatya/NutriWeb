@@ -118,6 +118,32 @@ class TestRanking:
         for rec in recommendations:
             assert rec.why and "health points" in rec.why
 
+    def test_top_scoring_product_is_not_reported_as_filtered_out(self):
+        """A perfect-scoring product has no healthier peer, and must say so.
+
+        Reporting "nothing passed your filters" when the real answer is "this is
+        already the best in its category" tells the user something untrue.
+        """
+        frame = catalog.connect().execute(
+            f"""SELECT {catalog.PRODUCT_COLUMNS} FROM catalog
+                WHERE health_score = 100 AND primary_category IS NOT NULL
+                ORDER BY COALESCE(unique_scans_n, 0) DESC LIMIT 1"""
+        ).fetchdf()
+        if frame.empty:
+            pytest.skip("no perfect-scoring product in the catalog")
+        recommendations, basis = engine.recommend(frame.iloc[0].to_dict(), UserProfile())
+        assert recommendations == []
+        assert basis["reason"] == "already_best"
+        assert "filter" not in basis["message"].lower()
+
+    def test_allergen_block_is_reported_as_filtered_out(self):
+        product = _popular_in("en:peanut-butters")
+        recommendations, basis = engine.recommend(
+            product, UserProfile(allergens=["en:peanuts"])
+        )
+        assert recommendations == []
+        assert basis["reason"] in ("filtered_out", "already_best")
+
     def test_unscored_product_returns_a_reason(self):
         frame = catalog.connect().execute(
             f"SELECT {catalog.PRODUCT_COLUMNS} FROM catalog WHERE health_score IS NULL LIMIT 1"

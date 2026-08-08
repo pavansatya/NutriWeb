@@ -54,12 +54,14 @@ with col_right:
         )
 
     if not recommendations:
-        st.warning(basis.get("message", "No healthier alternatives found."))
-        if basis.get("mode") == "category":
-            st.caption(
-                f"Searched {basis.get('pool', 0)} products in "
-                f"`{basis.get('category')}`. Loosening your filters may help."
-            )
+        message = basis.get("message", "No healthier alternatives found.")
+        # "Already the best option" is good news, not a failure.
+        if basis.get("reason") == "already_best":
+            st.success(f"✓ {message}")
+        else:
+            st.warning(message)
+            if basis.get("reason") == "filtered_out":
+                st.caption("Relaxing a dietary preference would surface these.")
         st.stop()
 
     # Be explicit about how the candidate set was chosen, rather than
